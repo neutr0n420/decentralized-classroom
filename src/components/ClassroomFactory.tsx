@@ -13,7 +13,10 @@ const ClassroomFactory: React.FC = () => {
   const [price, setPrice] = useState<number>(0);
 
   const createClassroom = async () => {
-    if (!window.ethereum) return alert("Please install MetaMask!");
+    // Check if MetaMask is installed
+    if (!window.ethereum || !window.ethereum.isMetaMask) {
+      return alert("Please install MetaMask!");
+    }
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -24,6 +27,9 @@ const ClassroomFactory: React.FC = () => {
     );
 
     try {
+      // Request MetaMask connection
+      await provider.send("eth_requestAccounts", []);
+
       const tx = await factoryContract.createClassroom(
         name,
         symbol,
@@ -56,7 +62,7 @@ const ClassroomFactory: React.FC = () => {
       }
       setClassrooms(classroomData);
     } catch (err) {
-      console.error("Error fetching classrooms:", err);
+      console.error("Error fetching classrooms/ No classrooms", err);
     }
   };
 
