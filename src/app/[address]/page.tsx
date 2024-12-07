@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { ethers } from "ethers";
 import { classroomABI } from "../../utils/constants";
+import { Web3Error } from "@/src/types/errors";
 
 interface PageProps {
   params: Promise<{
@@ -22,7 +23,7 @@ const ClassroomPage = ({ params }: PageProps) => {
   useEffect(() => {
     fetchClassroomDetails();
     fetchMaterials();
-  }, []);
+  }, [address]);
 
   const fetchClassroomDetails = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -87,14 +88,17 @@ const ClassroomPage = ({ params }: PageProps) => {
         // Now try to view materials
         const materials = await classroomContract.viewMaterials();
         setMaterials(Array.isArray(materials) ? materials : []);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error fetching materials:", error);
-        if (error.code === 4001) {
-          alert("Please connect your wallet to view materials");
-        } else if (error.code === -32000) {
-          alert(
-            "You need to purchase access to view materials. Please buy access first."
-          );
+        if (error && typeof error === "object" && "code" in error) {
+          const web3Error = error as Web3Error;
+          if (web3Error.code === 4001) {
+            alert("Please connect your wallet to view materials");
+          } else if (web3Error.code === -32000) {
+            alert(
+              "You need to purchase access to view materials. Please buy access first."
+            );
+          }
         } else {
           alert(
             "Error loading materials. Please make sure you have purchased access."
@@ -157,7 +161,7 @@ const ClassroomPage = ({ params }: PageProps) => {
         await tx.wait();
         alert("Access purchased successfully!");
         fetchMaterials();
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error buying access:", error);
         alert("Error purchasing access. Please try again.");
       }

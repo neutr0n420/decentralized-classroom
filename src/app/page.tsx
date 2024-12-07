@@ -10,7 +10,6 @@ const Home = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [provider, setProvider] =
     useState<ethers.providers.Web3Provider | null>(null);
-  const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
@@ -20,7 +19,6 @@ const Home = () => {
       if (typeof window.ethereum !== "undefined") {
         const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
         setProvider(ethProvider);
-        setSigner(ethProvider.getSigner());
       }
     };
     loadProvider();

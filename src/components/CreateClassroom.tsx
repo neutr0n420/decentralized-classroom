@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { classroomFactoryAbi, CONTRACT_ADDRESS } from "../utils/constants";
 import { useRouter } from "next/navigation";
+import type { EthereumProvider } from "@/src/types/window";
 
 export const CreateClassroom = () => {
   const [name, setName] = useState("");
@@ -25,16 +26,16 @@ export const CreateClassroom = () => {
         }
 
         // If multiple wallets are installed, ensure we use MetaMask
-        if (window.ethereum.providers) {
+        if (window.ethereum?.providers) {
           const metaMaskProvider = window.ethereum.providers.find(
-            (p: any) => p.isMetaMask
+            (p: EthereumProvider) => p.isMetaMask
           );
           if (metaMaskProvider) {
             window.ethereum = metaMaskProvider;
           }
         }
 
-        await window.ethereum.request({ method: "eth_requestAccounts" });
+        await window.ethereum?.request({ method: "eth_requestAccounts" });
         return true;
       } catch (error) {
         console.error("Error connecting wallet:", error);
@@ -60,7 +61,9 @@ export const CreateClassroom = () => {
         return;
       }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum as ethers.providers.ExternalProvider
+      );
       const signer = provider.getSigner();
       const factoryContract = new ethers.Contract(
         factoryAddress,

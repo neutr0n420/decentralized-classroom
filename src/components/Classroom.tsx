@@ -6,12 +6,14 @@ import { classroomABI } from "../utils/constants";
 
 interface ClassroomProps {
   address: string;
+  index: number;
+  onView: (address: string) => void;
 }
 
-const Classroom: React.FC<ClassroomProps> = ({ address }) => {
-  const [materials, setMaterials] = useState<any[]>([]);
+export const Classroom = ({ address }: ClassroomProps) => {
+  const [materials, setMaterials] = useState<string[]>([]);
   const [ipfsHash, setIpfsHash] = useState<string>("");
-  const [materialType, setMaterialType] = useState<string>("");
+  const [materialType, setMaterialType] = useState("");
 
   const addMaterial = async () => {
     if (!window.ethereum) return alert("Please install MetaMask!");
@@ -71,16 +73,10 @@ const Classroom: React.FC<ClassroomProps> = ({ address }) => {
       <div>
         {materials.map((material, index) => (
           <div key={index}>
-            <p>IPFS Hash: {material.ipfsHash}</p>
-            <p>Type: {material.materialType}</p>
-            <p>
-              Timestamp: {new Date(material.timestamp * 1000).toLocaleString()}
-            </p>
+            <p>IPFS Hash: {material}</p>
           </div>
         ))}
       </div>
     </div>
   );
 };
-
-export default Classroom;
