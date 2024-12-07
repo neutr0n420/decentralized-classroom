@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ethers } from "ethers";
-import { classroomAbi } from ".././utils/constants";
+import { classroomABI } from "../utils/constants";
 
 interface ClassroomProps {
   address: string;
@@ -20,7 +20,7 @@ const Classroom: React.FC<ClassroomProps> = ({ address }) => {
     const signer = provider.getSigner();
     const classroomContract = new ethers.Contract(
       address,
-      classroomAbi,
+      classroomABI,
       signer
     );
 
@@ -39,7 +39,7 @@ const Classroom: React.FC<ClassroomProps> = ({ address }) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const classroomContract = new ethers.Contract(
       address,
-      classroomAbi,
+      classroomABI,
       provider
     );
 
