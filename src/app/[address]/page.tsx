@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { ethers } from "ethers";
 import { classroomABI } from "../../utils/constants";
 
 const ClassroomPage = ({ params }: { params: { address: string } }) => {
+  const address = params.address;
+
   const [materials, setMaterials] = useState<string[]>([]);
   const [newMaterial, setNewMaterial] = useState("");
   const [loading, setLoading] = useState(false);

@@ -13,6 +13,39 @@ export const CreateClassroom = () => {
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
 
+  const connectWallet = async () => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        // Check if MetaMask is installed
+        const isMetaMask = window.ethereum.isMetaMask;
+
+        if (!isMetaMask) {
+          alert("Please install MetaMask wallet");
+          return false;
+        }
+
+        // If multiple wallets are installed, ensure we use MetaMask
+        if (window.ethereum.providers) {
+          const metaMaskProvider = window.ethereum.providers.find(
+            (p: any) => p.isMetaMask
+          );
+          if (metaMaskProvider) {
+            window.ethereum = metaMaskProvider;
+          }
+        }
+
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        return true;
+      } catch (error) {
+        console.error("Error connecting wallet:", error);
+        return false;
+      }
+    } else {
+      alert("Please install MetaMask wallet");
+      return false;
+    }
+  };
+
   const createClassroom = async () => {
     if (!name || !symbol || !price) {
       alert("Please fill in all fields");
@@ -21,23 +54,27 @@ export const CreateClassroom = () => {
 
     setLoading(true);
     try {
-      if (typeof window.ethereum !== "undefined") {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const factoryContract = new ethers.Contract(
-          factoryAddress,
-          classroomFactoryAbi,
-          signer
-        );
-
-        const tx = await factoryContract.createClassroom(
-          name,
-          symbol,
-          ethers.utils.parseEther(price)
-        );
-        await tx.wait();
-        router.push("/");
+      const connected = await connectWallet();
+      if (!connected) {
+        setLoading(false);
+        return;
       }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const factoryContract = new ethers.Contract(
+        factoryAddress,
+        classroomFactoryAbi,
+        signer
+      );
+
+      const tx = await factoryContract.createClassroom(
+        name,
+        symbol,
+        ethers.utils.parseEther(price)
+      );
+      await tx.wait();
+      router.push("/");
     } catch (error) {
       console.error("Error creating classroom:", error);
       alert("Error creating classroom. Please try again.");
