@@ -4,9 +4,14 @@ import { useState, useEffect, use } from "react";
 import { ethers } from "ethers";
 import { classroomABI } from "../../utils/constants";
 
-const ClassroomPage = ({ params }: { params: { address: string } }) => {
-  const address = params.address;
+interface PageProps {
+  params: Promise<{
+    address: string;
+  }>;
+}
 
+const ClassroomPage = ({ params }: PageProps) => {
+  const { address } = use(params);
   const [materials, setMaterials] = useState<string[]>([]);
   const [newMaterial, setNewMaterial] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,19 +26,35 @@ const ClassroomPage = ({ params }: { params: { address: string } }) => {
 
   const fetchClassroomDetails = async () => {
     if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const classroomContract = new ethers.Contract(
-        params.address,
-        classroomABI,
-        provider
-      );
       try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        console.log("Contract address:", address);
+        console.log("ABI:", classroomABI);
+
+        const classroomContract = new ethers.Contract(
+          address,
+          classroomABI,
+          provider
+        );
+
+        // Check if functions exist
+        console.log("Contract methods:", classroomContract.functions);
+
         const name = await classroomContract.name();
+        console.log("Name retrieved:", name);
         const symbol = await classroomContract.symbol();
+        console.log("Symbol retrieved:", symbol);
+
         setClassroomName(name);
         setClassroomSymbol(symbol);
       } catch (error) {
-        console.error("Error fetching classroom details:", error);
+        console.error("Error details:", {
+          error,
+          contractAddress: address,
+          hasEthereum: !!window.ethereum,
+        });
+        setClassroomName("Unnamed Classroom");
+        setClassroomSymbol("???");
       }
     }
   };
@@ -42,19 +63,48 @@ const ClassroomPage = ({ params }: { params: { address: string } }) => {
     if (typeof window.ethereum !== "undefined") {
       setLoading(true);
       try {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+
         const classroomContract = new ethers.Contract(
-          params.address,
+          address,
           classroomABI,
-          provider
+          signer
         );
-        const materials = await classroomContract.getMaterials();
-        setMaterials(materials);
-      } catch (error) {
+
+        // First check if user has access (owns an NFT)
+        const balance = await classroomContract.balanceOf(userAddress);
+
+        if (balance.toNumber() === 0) {
+          // User doesn't have access, try to buy access
+          const price = await classroomContract.nftPrice();
+          const buyAccess = await classroomContract.buyAccess({ value: price });
+          await buyAccess.wait();
+        }
+
+        // Now try to view materials
+        const materials = await classroomContract.viewMaterials();
+        setMaterials(Array.isArray(materials) ? materials : []);
+      } catch (error: any) {
         console.error("Error fetching materials:", error);
+        if (error.code === 4001) {
+          alert("Please connect your wallet to view materials");
+        } else if (error.code === -32000) {
+          alert(
+            "You need to purchase access to view materials. Please buy access first."
+          );
+        } else {
+          alert(
+            "Error loading materials. Please make sure you have purchased access."
+          );
+        }
       } finally {
         setLoading(false);
       }
+    } else {
+      alert("Please install MetaMask to use this feature");
     }
   };
 
@@ -67,10 +117,11 @@ const ClassroomPage = ({ params }: { params: { address: string } }) => {
     setAddingMaterial(true);
     try {
       if (typeof window.ethereum !== "undefined") {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const classroomContract = new ethers.Contract(
-          params.address,
+          address,
           classroomABI,
           signer
         );
@@ -88,6 +139,31 @@ const ClassroomPage = ({ params }: { params: { address: string } }) => {
     }
   };
 
+  // Add a new function to buy access
+  const buyAccess = async () => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const classroomContract = new ethers.Contract(
+          address,
+          classroomABI,
+          signer
+        );
+
+        const price = await classroomContract.nftPrice();
+        const tx = await classroomContract.buyAccess({ value: price });
+        await tx.wait();
+        alert("Access purchased successfully!");
+        fetchMaterials();
+      } catch (error: any) {
+        console.error("Error buying access:", error);
+        alert("Error purchasing access. Please try again.");
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-12 px-4">
       <div className="max-w-4xl mx-auto">
@@ -95,9 +171,19 @@ const ClassroomPage = ({ params }: { params: { address: string } }) => {
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
             {classroomName || "Loading..."} ({classroomSymbol})
           </h1>
-          <p className="text-gray-400 break-all">
-            Contract Address: {params.address}
-          </p>
+          <p className="text-gray-400 break-all">Contract Address: {address}</p>
+        </div>
+
+        <div className="bg-gray-800 rounded-xl p-8 shadow-xl border border-gray-700 mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Course Access</h2>
+            <button
+              onClick={buyAccess}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors duration-200"
+            >
+              Buy Access
+            </button>
+          </div>
         </div>
 
         <div className="bg-gray-800 rounded-xl p-8 shadow-xl border border-gray-700 mb-8">
