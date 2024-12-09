@@ -21,6 +21,19 @@ export const classroomFactoryAbi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "_classroom",
+    outputs: [
+      {
+        internalType: "contract Classroom",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",

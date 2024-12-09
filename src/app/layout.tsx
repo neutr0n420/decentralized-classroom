@@ -1,4 +1,7 @@
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+import Navbar from "../components/Navbar";
 import "./globals.css";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 
 export default function RootLayout({
   children,
@@ -7,7 +10,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <DynamicContextProvider
+          settings={{
+            environmentId: "08b7fb83-b9c8-4800-babe-a0d59e4d37d9",
+            walletConnectors: [EthereumWalletConnectors],
+          }}
+        >
+          {" "}
+          <Navbar />
+          {children}
+        </DynamicContextProvider>
+      </body>
     </html>
   );
 }
