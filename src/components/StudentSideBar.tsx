@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Home, Plus, Search, Settings } from "lucide-react";
+import { Home, Plus, Search } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,7 @@ import {
 } from "./ui/sidebar";
 
 // Menu items.
-const items = [
+const studentSidebar = [
   {
     title: "Your classes",
     url: "/dashboard",
@@ -24,7 +24,6 @@ const items = [
     url: "/dashboard/classrooms",
     icon: Search,
   },
-
   {
     title: "create class",
     url: "#",
@@ -32,19 +31,23 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+
+export function StudentSideBar() {
+
   return (
     <Sidebar className="mt-12">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            Student Dashboard
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {studentSidebar.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
-                      <item.icon />
+                      {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>

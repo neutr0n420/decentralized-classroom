@@ -3,8 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../components/ui/button";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useEffect } from "react";
+import { redirect } from 'next/navigation'
 
 export default function Home() {
+  const { isConnected } = useAppKitAccount()
+  console.log(isConnected);
+  useEffect(() => {
+    if (isConnected) {
+      redirect('/TeacherStudent')
+    }
+  }, [isConnected])
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
@@ -21,7 +31,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button size="lg">Start Teaching</Button>
+                <Button size="lg">Get Started </Button>
                 <Button variant="outline" size="lg">
                   Learn More
                 </Button>

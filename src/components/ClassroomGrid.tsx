@@ -1,10 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
 import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -12,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { classroomFactoryAbi, CONTRACT_ADDRESS } from "../utils/constants";
 import { ethers } from "ethers";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button } from "./ui/button";
 
 export default function ClassroomGrid() {
@@ -20,7 +16,6 @@ export default function ClassroomGrid() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
-  const { primaryWallet } = useDynamicContext();
 
   useEffect(() => {
     fetchClassrooms();
@@ -41,6 +36,7 @@ export default function ClassroomGrid() {
         signer
       );
       const addresses = await factoryContract.getClassrooms();
+      // const className = await factoryContract.
       setClassrooms(addresses);
     } catch (error) {
       console.error("Error fetching classrooms:", error);

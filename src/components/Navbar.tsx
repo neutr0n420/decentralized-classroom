@@ -1,7 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import DynamicAuth from "./DynamicAuth";
 
 const Navbar = () => {
   return (
@@ -20,7 +18,7 @@ const Navbar = () => {
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <DynamicAuth />
+          <appkit-button label="Click here" />
         </div>
       </div>
     </header>

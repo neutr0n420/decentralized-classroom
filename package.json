@@ -9,13 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@dynamic-labs/ethereum": "^3.9.0",
-    "@dynamic-labs/sdk-react-core": "^3.9.0",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@reown/appkit": "^1.6.0",
+    "@reown/appkit-adapter-ethers5": "^1.6.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "ethers": "^5.7.2",

@@ -1,14 +1,30 @@
-import { AppSidebar } from "@/src/components/SideBar";
+"use client";
+import { StudentSideBar } from "@/src/components/StudentSideBar";
+import { TeacherSideBar } from "@/src/components/TeacherSideBar";
 import { SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        {children}
-      </main>
-    </SidebarProvider>
-  );
+  const userIs = localStorage.getItem('userIs') || 'null';
+
+  if (userIs !== 'null' && JSON.parse(userIs) === 'teacher') {
+    return (
+      <SidebarProvider>
+        <TeacherSideBar />
+        <main>
+          <SidebarTrigger />
+          {children}
+        </main>
+      </SidebarProvider>
+    );
+  } else if (userIs !== 'null' && JSON.parse(userIs) === 'student') {
+    return (
+      <SidebarProvider>
+        <StudentSideBar />
+        <main>
+          <SidebarTrigger />
+          {children}
+        </main>
+      </SidebarProvider>
+    );
+  }
 }

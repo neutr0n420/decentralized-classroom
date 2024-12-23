@@ -4,26 +4,26 @@ import { useState, useEffect, use } from "react";
 import { ethers } from "ethers";
 import { classroomABI } from "../../../utils/constants";
 import { Web3Error } from "@/src/types/errors";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { Badge } from "@/src/components/ui/badge";
 import ClassroomPurchase from "@/src/components/ClassroomPurchase";
 import ClassroomMaterials from "@/src/components/ClassroomMaterials";
 
 interface PageProps {
   params: Promise<{
-    address: string;
+    Walletaddress: string;
   }>;
 }
 
 const ClassroomPage = ({ params }: PageProps) => {
-  const { address } = use(params);
+  const { Walletaddress } = use(params);
   const [materials, setMaterials] = useState<string[]>([]);
   const [newMaterial, setNewMaterial] = useState("");
   const [loading, setLoading] = useState(false);
   const [addingMaterial, setAddingMaterial] = useState(false);
   const [classroomName, setClassroomName] = useState("");
   const [classroomSymbol, setClassroomSymbol] = useState("");
-  const { primaryWallet } = useDynamicContext();
+  const { address } = useAppKitAccount();
 
   useEffect(() => {
     fetchClassroomDetails();
@@ -31,7 +31,7 @@ const ClassroomPage = ({ params }: PageProps) => {
   }, [address]);
 
   const fetchClassroomDetails = async () => {
-    if (primaryWallet) {
+    if (address) {
       try {
         const provider = new ethers.providers.Web3Provider(
           window.ethereum as any
@@ -70,7 +70,7 @@ const ClassroomPage = ({ params }: PageProps) => {
   };
 
   const fetchMaterials = async () => {
-    if (primaryWallet) {
+    if (address) {
       setLoading(true);
       try {
         const provider = new ethers.providers.Web3Provider(
