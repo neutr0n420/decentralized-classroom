@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <SidebarProvider>
         <TeacherSideBar />
-        <main>
+        <main className="flex flex-col h-screen w-screen">
           <SidebarTrigger />
           {children}
         </main>
@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <SidebarProvider>
         <StudentSideBar />
-        <main>
+        <main className="flex flex-col h-screen w-screen">
           <SidebarTrigger />
           {children}
         </main>

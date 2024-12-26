@@ -16,61 +16,24 @@ interface PageProps {
 }
 
 const ClassroomPage = ({ params }: PageProps) => {
-  const { Walletaddress } = use(params);
+  const { classroomAddress } = use(params);
+
+
   const [materials, setMaterials] = useState<string[]>([]);
   const [newMaterial, setNewMaterial] = useState("");
   const [loading, setLoading] = useState(false);
   const [addingMaterial, setAddingMaterial] = useState(false);
   const [classroomName, setClassroomName] = useState("");
   const [classroomSymbol, setClassroomSymbol] = useState("");
-  const { address } = useAppKitAccount();
 
   useEffect(() => {
-    fetchClassroomDetails();
     fetchMaterials();
-  }, [address]);
+  }, [classroomAddress]);
 
-  const fetchClassroomDetails = async () => {
-    if (address) {
-      try {
-        const provider = new ethers.providers.Web3Provider(
-          window.ethereum as any
-        );
-        const signer = provider.getSigner();
-        console.log("Contract address:", address);
-        console.log("ABI:", classroomABI);
-
-        const classroomContract = new ethers.Contract(
-          address,
-          classroomABI,
-          signer
-        );
-
-        console.log({ classroomContract });
-
-        console.log("Contract methods:", classroomContract.functions);
-
-        const name = await classroomContract.name();
-        console.log("Name retrieved:", name);
-        const symbol = await classroomContract.symbol();
-        console.log("Symbol retrieved:", symbol);
-
-        setClassroomName(name);
-        setClassroomSymbol(symbol);
-      } catch (error) {
-        console.error("Error details:", {
-          error,
-          contractAddress: address,
-          hasEthereum: !!window.ethereum,
-        });
-        setClassroomName("Unnamed Classroom");
-        setClassroomSymbol("???");
-      }
-    }
-  };
+ 
 
   const fetchMaterials = async () => {
-    if (address) {
+    if (classroomAddress) {
       setLoading(true);
       try {
         const provider = new ethers.providers.Web3Provider(
@@ -80,7 +43,7 @@ const ClassroomPage = ({ params }: PageProps) => {
         const userAddress = await signer.getAddress();
 
         const classroomContract = new ethers.Contract(
-          address,
+          classroomAddress,
           classroomABI,
           signer
         );

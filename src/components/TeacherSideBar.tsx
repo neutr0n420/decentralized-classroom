@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
+import { useRouter } from "next/navigation";
 
 // Menu items.
 
@@ -35,6 +36,13 @@ const teacherSidebar = [
 export function TeacherSideBar() {
   // Choose the appropriate sidebar based on userIs
 
+  const router = useRouter();
+
+  const handleItemClick = (item: { url: string }) => {
+    const { url } = item;
+    router.push(url);
+  };
+
   return (
     <Sidebar className="mt-12">
       <SidebarContent>
@@ -44,11 +52,11 @@ export function TeacherSideBar() {
             <SidebarMenu>
               {teacherSidebar.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                    </a>
+                  <SidebarMenuButton
+                    onClick={() => handleItemClick(item)}
+                  >
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

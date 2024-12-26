@@ -8,7 +8,7 @@ const Navbar = () => {
         <div className="mr-4 hidden md:flex">
           <Link className="mr-6 flex items-center space-x-2" href="/">
             <span className="hidden font-bold sm:inline-block">
-              DeClassroom
+              DeClass
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">

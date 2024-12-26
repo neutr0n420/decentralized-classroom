@@ -4,9 +4,23 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { classroomFactoryAbi, CONTRACT_ADDRESS } from "../utils/constants";
 import { useRouter } from "next/navigation";
-import type { EthereumProvider } from "@/src/types/window";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Label } from "./ui/label";
+import { Loader2 } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { useAppKitAccount } from "@reown/appkit/react";
 
-export const CreateClassroom = () => {
+// Import the hook from AppKit
+
+export default function CreateClassroom() {
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [price, setPrice] = useState("");
@@ -14,38 +28,8 @@ export const CreateClassroom = () => {
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
 
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        // Check if MetaMask is installed
-        const isMetaMask = window.ethereum.isMetaMask;
-
-        if (!isMetaMask) {
-          alert("Please install MetaMask wallet");
-          return false;
-        }
-
-        // If multiple wallets are installed, ensure we use MetaMask
-        if (window.ethereum?.providers) {
-          const metaMaskProvider = window.ethereum.providers.find(
-            (p: EthereumProvider) => p.isMetaMask
-          );
-          if (metaMaskProvider) {
-            window.ethereum = metaMaskProvider;
-          }
-        }
-
-        await window.ethereum?.request({ method: "eth_requestAccounts" });
-        return true;
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-        return false;
-      }
-    } else {
-      alert("Please install MetaMask wallet");
-      return false;
-    }
-  };
+  // Use the hook to get the wallet address and connection status
+  const { address, isConnected } = useAppKitAccount();
 
   const createClassroom = async () => {
     if (!name || !symbol || !price) {
@@ -53,31 +37,46 @@ export const CreateClassroom = () => {
       return;
     }
 
+    if (!isConnected) {
+      alert("Please connect your wallet.");
+      return;
+    }
+
+    if (!address) {
+      alert("Wallet address is not available.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const connected = await connectWallet();
-      if (!connected) {
-        setLoading(false);
-        return;
+      if (!window.ethereum) {
+        throw new Error("Please install a web3 wallet");
       }
-
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum as ethers.providers.ExternalProvider
-      );
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
+      console.log("Signer address:", await signer.getAddress());
       const factoryContract = new ethers.Contract(
         factoryAddress,
         classroomFactoryAbi,
         signer
       );
 
+      console.log({
+        name,
+        symbol,
+        price,
+        ethers: ethers.utils.parseEther(price),
+      });
+
       const tx = await factoryContract.createClassroom(
         name,
         symbol,
         ethers.utils.parseEther(price)
       );
+      console.log("Transaction hash:", tx.hash);
       await tx.wait();
-      router.push("/");
+
+      alert("Classroom created successfully!");
     } catch (error) {
       console.error("Error creating classroom:", error);
       alert("Error creating classroom. Please try again.");
@@ -87,101 +86,61 @@ export const CreateClassroom = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
-            Create New Classroom
-          </h1>
-          <p className="text-gray-400">
+    <div className="container mx-auto px-4 py-8">
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Create New Classroom</CardTitle>
+          <CardDescription>
             Set up your decentralized learning environment
-          </p>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-8 shadow-xl border border-gray-700">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Classroom Name
-              </label>
-              <input
-                type="text"
-                placeholder="e.g., Advanced Blockchain Development"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 text-white placeholder-gray-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Symbol
-              </label>
-              <input
-                type="text"
-                placeholder="e.g., BCD101"
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 text-white placeholder-gray-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Price (ETH)
-              </label>
-              <input
-                type="number"
-                step="0.001"
-                placeholder="e.g., 0.1"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 text-white placeholder-gray-400"
-              />
-            </div>
-
-            <div className="flex gap-4 mt-8">
-              <button
-                onClick={() => router.push("/")}
-                className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={createClassroom}
-                disabled={loading}
-                className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {loading ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5 mr-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                      />
-                    </svg>
-                    Creating...
-                  </>
-                ) : (
-                  "Create Classroom"
-                )}
-              </button>
-            </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Classroom Name</Label>
+            <Input
+              id="name"
+              placeholder="e.g., Advanced Blockchain Development"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
-        </div>
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="symbol">Symbol</Label>
+            <Input
+              id="symbol"
+              placeholder="e.g., BCD101"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="price">Price (ETH)</Label>
+            <Input
+              id="price"
+              type="number"
+              step="0.001"
+              placeholder="e.g., 0.1"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button variant="outline" onClick={() => router.push("/")}>
+            Cancel
+          </Button>
+          <Button onClick={createClassroom} disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Classroom"
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
-};
+}
