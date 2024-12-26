@@ -4,9 +4,9 @@ import { TeacherSideBar } from "@/src/components/TeacherSideBar";
 import { SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const userIs = localStorage.getItem('userIs') || 'null';
+  const userIs = localStorage.getItem("userIs") || "null";
 
-  if (userIs !== 'null' && JSON.parse(userIs) === 'teacher') {
+  if (userIs !== "null" && JSON.parse(userIs) === "teacher") {
     return (
       <SidebarProvider>
         <TeacherSideBar />
@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </main>
       </SidebarProvider>
     );
-  } else if (userIs !== 'null' && JSON.parse(userIs) === 'student') {
+  } else if (userIs !== "null" && JSON.parse(userIs) === "student") {
     return (
       <SidebarProvider>
         <StudentSideBar />
