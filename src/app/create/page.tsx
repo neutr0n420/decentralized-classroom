@@ -1,4 +1,4 @@
-import { CreateClassroom } from "@/src/components/CreateClassroom";
+import CreateClassroom from "@/src/components/CreateClassroom";
 import React from "react";
 
 const page = () => {

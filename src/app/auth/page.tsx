@@ -1,10 +1,9 @@
-
 "use client";
-import { createAppKit } from '@reown/appkit/react'
-import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5'
-import { mainnet, sepolia, defineChain } from '@reown/appkit/networks'
+import { createAppKit } from "@reown/appkit/react";
+import { Ethers5Adapter } from "@reown/appkit-adapter-ethers5";
+import { mainnet, sepolia, defineChain } from "@reown/appkit/networks";
 
-const projectId = "baf8428698c7cddf0e212bcff8ffabdf"
+const projectId = "baf8428698c7cddf0e212bcff8ffabdf";
 
 // const metaData = {
 
@@ -16,21 +15,20 @@ const eduChain = defineChain({
   nativeCurrency: {
     decimals: 18,
     name: "Edu-chain",
-    symbol: 'EDU',
+    symbol: "EDU",
   },
   rpcUrls: {
     default: {
       http: ["https://open-campus-codex-sepolia.drpc.org"],
-      webSocket: ["wss://open-campus-codex-sepolia.drpc.org"]
+      webSocket: ["wss://open-campus-codex-sepolia.drpc.org"],
     },
   },
   blockExplorers: {
-    default: { name: 'Explorer', url: 'BLOCK_EXPLORER_URL' },
+    default: { name: "Explorer", url: "BLOCK_EXPLORER_URL" },
   },
-  chainNamespace: 'eip155',
-  caipNetworkId: "656476"
-})
-
+  chainNamespace: "eip155",
+  caipNetworkId: "eip155:656476",
+});
 
 // 3. Create the AppKit instance
 createAppKit({
@@ -40,16 +38,16 @@ createAppKit({
   projectId,
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
-    socials: ['google', 'github'],
-    emailShowWallets: true
-  }
-
-})
-
-export function AppKit({
+    socials: ["google", "github"],
+    emailShowWallets: true,
+  },
+});
+function AppKit({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return children;
 }
+
+export default AppKit;

@@ -1,10 +1,9 @@
 "use client";
-import ClassroomFilters from "@/src/components/ClassroomFilters";
 import ClassroomGrid from "@/src/components/ClassroomGrid";
 import ClassroomSearch from "@/src/components/ClassroomSearch";
 import { Skeleton } from "@/src/components/ui/skeleton";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 
 export default function ClassroomsPage() {
   return (

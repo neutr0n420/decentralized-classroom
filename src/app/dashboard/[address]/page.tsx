@@ -8,42 +8,89 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { Badge } from "@/src/components/ui/badge";
 import ClassroomPurchase from "@/src/components/ClassroomPurchase";
 import ClassroomMaterials from "@/src/components/ClassroomMaterials";
+import { Input } from "@/src/components/ui/input";
+import { Button } from "@/src/components/ui/button";
+import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
 
 interface PageProps {
   params: Promise<{
-    Walletaddress: string;
+    address: string;
   }>;
 }
 
-const ClassroomPage = ({ params }: PageProps) => {
-  const { classroomAddress } = use(params);
+// Define the base ethereum provider interface
+export type EthereumProviderType = ExternalProvider & {
+  request: JsonRpcFetchFunc;
+  selectedAddress?: string;
+  isMetaMask?: boolean;
+};
 
+const ClassroomPage = ({ params }: PageProps) => {
+  const { address } = use(params); //its the classroom address
 
   const [materials, setMaterials] = useState<string[]>([]);
   const [newMaterial, setNewMaterial] = useState("");
-  const [loading, setLoading] = useState(false);
   const [addingMaterial, setAddingMaterial] = useState(false);
   const [classroomName, setClassroomName] = useState("");
   const [classroomSymbol, setClassroomSymbol] = useState("");
+  const [classroomPrice, setClassroomPrice] = useState("");
+  const { address: userAddress } = useAppKitAccount();
+  console.log(classroomName, classroomSymbol, classroomPrice);
+
+  console.log(params);
 
   useEffect(() => {
+    fetchClassroomDetails(address).then((details) => {
+      setClassroomName(details.name);
+      setClassroomSymbol(details.symbol);
+      setClassroomPrice(details.price);
+    });
     fetchMaterials();
-  }, [classroomAddress]);
+  }, [address]);
 
- 
+  const fetchClassroomDetails = async (classroomAddress: string) => {
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum as unknown as EthereumProviderType
+      );
+      const signer = provider.getSigner();
+
+      const classroomContract = new ethers.Contract(
+        classroomAddress,
+        classroomABI,
+        signer
+      );
+      console.log(classroomContract);
+      const name = await classroomContract.name();
+      const symbol = await classroomContract.symbol();
+      const price = await classroomContract.nftPrice();
+
+      return {
+        name,
+        symbol,
+        price: ethers.utils.formatEther(price),
+      };
+    } catch (error) {
+      console.error("Error fetching classroom details:", error);
+      return {
+        name: "Unnamed Classroom",
+        symbol: "???",
+        price: "0",
+      };
+    }
+  };
 
   const fetchMaterials = async () => {
-    if (classroomAddress) {
-      setLoading(true);
+    if (address) {
       try {
         const provider = new ethers.providers.Web3Provider(
-          window.ethereum as any
+          window.ethereum as unknown as EthereumProviderType
         );
         const signer = provider.getSigner();
         const userAddress = await signer.getAddress();
 
         const classroomContract = new ethers.Contract(
-          classroomAddress,
+          address,
           classroomABI,
           signer
         );
@@ -57,6 +104,7 @@ const ClassroomPage = ({ params }: PageProps) => {
         }
 
         const materials = await classroomContract.viewMaterials();
+        console.log("materials", materials);
         setMaterials(Array.isArray(materials) ? materials : []);
       } catch (error: unknown) {
         console.error("Error fetching materials:", error);
@@ -75,7 +123,6 @@ const ClassroomPage = ({ params }: PageProps) => {
           );
         }
       } finally {
-        setLoading(false);
       }
     } else {
       alert("Please install MetaMask to use this feature");
@@ -91,9 +138,9 @@ const ClassroomPage = ({ params }: PageProps) => {
 
     setAddingMaterial(true);
     try {
-      if (primaryWallet) {
+      if (userAddress) {
         const provider = new ethers.providers.Web3Provider(
-          window.ethereum as any
+          window.ethereum as unknown as EthereumProviderType
         );
         const signer = provider.getSigner();
         const classroomContract = new ethers.Contract(
@@ -120,7 +167,7 @@ const ClassroomPage = ({ params }: PageProps) => {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" });
         const provider = new ethers.providers.Web3Provider(
-          window.ethereum as any
+          window.ethereum as unknown as EthereumProviderType
         );
         const signer = provider.getSigner();
         const classroomContract = new ethers.Contract(
@@ -145,19 +192,53 @@ const ClassroomPage = ({ params }: PageProps) => {
     <div className="container mx-auto px-4 py-8">
       <div className="grid gap-8 md:grid-cols-[3fr_1fr]">
         <div>
-          <h1 className="text-3xl font-bold mt-6 mb-2">Classroom title</h1>
-          <p className="text-gray-600 mb-4">by xxxxxx</p>
+          <h1 className="text-3xl font-bold mt-6 mb-2">{classroomName}</h1>
           <Badge>category</Badge>
+
           <p className="mt-4 text-gray-700">address: {address}</p>
 
-          <p className="mt-4 text-gray-700">description</p>
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col gap-4">
             <h2 className="text-2xl font-semibold mb-4">Course Materials</h2>
+            <div className="flex gap-4">
+              <Input
+                placeholder="Enter IPFS Hash"
+                value={newMaterial}
+                onChange={(e) => setNewMaterial(e.target.value)}
+              />
+              <Button onClick={addMaterial} disabled={addingMaterial}>
+                {addingMaterial ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 mr-2"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    Adding...
+                  </>
+                ) : (
+                  "Add Material"
+                )}
+              </Button>
+            </div>
             <ClassroomMaterials materials={materials} />
           </div>
         </div>
         <div>
           <ClassroomPurchase
+            price={classroomPrice.toString()}
             id={address}
             title={classroomName}
             symbol={classroomSymbol}

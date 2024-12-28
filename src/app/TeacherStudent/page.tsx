@@ -1,10 +1,8 @@
 "use client";
 import Link from "next/link";
 import { GraduationCap, School } from "lucide-react";
-import { useState } from "react";
 
 export default function TeacherOrStudent() {
-
   const items = [
     {
       title: "Teacher",
@@ -20,7 +18,7 @@ export default function TeacherOrStudent() {
 
   return (
     <>
-      <div className="pt-96">
+      <div className="h-screen flex flex-col justify-center items-center">
         <h1 className="text-center text-2xl font-semibold">Continue as: </h1>
         <div className="flex justify-center items-center ">
           {items.map((item) => (

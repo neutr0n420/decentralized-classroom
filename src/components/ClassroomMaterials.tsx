@@ -19,6 +19,8 @@ export default function ClassroomMaterials({
 }: ClassroomMaterialsProps) {
   const [isAccessGranted, setIsAccessGranted] = useState(false);
 
+  console.log("materialns", materials);
+
   useEffect(() => {
     const checkAccess = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -31,6 +33,8 @@ export default function ClassroomMaterials({
     id: index,
     hash: hash,
   }));
+
+  console.log(formattedMaterials);
 
   return (
     <Card>

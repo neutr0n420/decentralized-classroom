@@ -125,7 +125,7 @@ export default function ManageClasses() {
           <CardHeader>
             <CardTitle>No Classes Found</CardTitle>
             <CardDescription>
-              You haven't created any classes yet.
+              You have not created any classes yet.
             </CardDescription>
           </CardHeader>
           <CardFooter>

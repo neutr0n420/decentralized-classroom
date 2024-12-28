@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import { AppKit } from "@/src/app/auth/page"
+import AppKit from "@/src/app/auth/page";
 import "./globals.css";
 
 export default function RootLayout({
@@ -16,6 +16,6 @@ export default function RootLayout({
           {children}
         </AppKit>
       </body>
-    </html >
+    </html>
   );
 }

@@ -10,6 +10,7 @@ import {
 import { ethers } from "ethers";
 import { Button } from "./ui/button";
 import { useAppKitAccount } from "@reown/appkit/react";
+import { useStore } from "../store/store";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -21,13 +22,17 @@ interface ClassroomDetail {
 
 export default function ClassroomGrid() {
   const [classrooms, setClassrooms] = useState<string[]>([]);
-  const [classroomDetails, setClassroomDetails] = useState<
-    Record<string, ClassroomDetail>
-  >({});
+  // const [classroomDetails, setClassroomDetails] = useState<
+  //   Record<string, ClassroomDetail>
+  // >({});
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
   const { isConnected } = useAppKitAccount();
+
+  const classroomDetails = useStore((state) => state.classroomDetails);
+  const setClassroomDetails = useStore((state) => state.setClassroomDetails);
 
   useEffect(() => {
     if (isConnected) {
