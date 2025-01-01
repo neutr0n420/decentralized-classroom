@@ -42,12 +42,8 @@ createAppKit({
     emailShowWallets: true,
   },
 });
-function AppKit({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+function AppKit({ children, }: { children: React.ReactNode; }) {
+  return <>{children}</>;
 }
 
 export default AppKit;

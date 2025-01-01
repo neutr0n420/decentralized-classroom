@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
-import AppKit from "@/src/app/auth/page";
+import AppKit from "./auth";
+
 import "./globals.css";
 
 export default function RootLayout({
