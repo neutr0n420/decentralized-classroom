@@ -15,7 +15,7 @@ export default function TeacherOrStudent() {
       icon: GraduationCap,
     },
   ];
-
+  const ISSERVER = typeof window === "undefined";
   return (
     <>
       <div className="h-screen flex flex-col justify-center items-center">
@@ -24,8 +24,10 @@ export default function TeacherOrStudent() {
           {items.map((item) => (
             <Link
               onClick={() => {
-                const user: string = item.title.toLowerCase();
-                localStorage.setItem("userIs", JSON.stringify(user));
+                if (!ISSERVER) {
+                  const user: string = item.title.toLowerCase();
+                  localStorage.setItem("userIs", JSON.stringify(user));
+                }
               }}
               href={item.url}
               key={item.title}

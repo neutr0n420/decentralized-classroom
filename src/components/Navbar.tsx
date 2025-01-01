@@ -18,7 +18,7 @@ const Navbar = () => {
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <appkit-button label="Click here" />
+          <appkit-button label="Login" />
         </div>
       </div>
     </header>

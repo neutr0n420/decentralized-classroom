@@ -125,7 +125,10 @@ export default function ClassroomGrid() {
         classroomFactoryAbi,
         signer
       );
+      console.log("Factory contract: ", factoryContract);
       const addresses = await factoryContract.getClassrooms();
+      console.log("This is address", addresses);
+      console.log("This is address", addresses);
       setClassrooms(addresses);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
