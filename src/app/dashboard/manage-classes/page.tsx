@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import ClassroomCard from "@/src/components/ClassroomCard";
+import { motion } from "framer-motion";
 
 interface Classroom {
   address: string;
@@ -101,42 +102,77 @@ export default function ManageClasses() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Manage Your Classes</h1>
-        <Button asChild>
-          <Link href="/dashboard/create-class">
-            <Plus className="mr-2 h-4 w-4" /> Create New Class
-          </Link>
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 text-white">
+      <div className="container mx-auto px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex justify-between items-center mb-8"
+        >
+          <h1 className="text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+            Manage Your Classes
+          </h1>
+          <Button
+            asChild
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+          >
+            <Link href="/dashboard/create-class">
+              <Plus className="mr-2 h-4 w-4" /> Create New Class
+            </Link>
+          </Button>
+        </motion.div>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+          </div>
+        ) : classes.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {classes.map((classroom, index) => (
+              <motion.div
+                key={classroom.address}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <ClassroomCard classroom={classroom} />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="bg-gray-800 bg-opacity-50 text-white border-purple-500">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-purple-400">
+                  No Classes Found
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  You have not created any classes yet.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button
+                  asChild
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                >
+                  <Link href="/dashboard/create-class">
+                    Create Your First Class
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        )}
       </div>
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      ) : classes.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {classes.map((classroom) => (
-            <ClassroomCard key={classroom.address} classroom={classroom} />
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>No Classes Found</CardTitle>
-            <CardDescription>
-              You have not created any classes yet.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button asChild>
-              <Link href="/dashboard/create-class">
-                Create Your First Class
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
     </div>
   );
 }

@@ -7,8 +7,8 @@ const Page = () => {
   // console.log(user);
 
   return (
-    <div className="flex h-screen w-screen justify-center items-center">
-      page
+    <div className="flex  justify-center h-full items-center text-white">
+      MANAGE CLASSROOMS/ Courses PAGE
     </div>
   );
 };

@@ -1,16 +1,19 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { ethers } from "ethers";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useStore } from "../store/store";
 import { Card, CardContent, CardFooter, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 import {
   classroomABI,
   classroomFactoryAbi,
   CONTRACT_ADDRESS,
 } from "../utils/constants";
-import { ethers } from "ethers";
-import { Button } from "./ui/button";
-import { useAppKitAccount } from "@reown/appkit/react";
-import { useStore } from "../store/store";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -22,10 +25,6 @@ interface ClassroomDetail {
 
 export default function ClassroomGrid() {
   const [classrooms, setClassrooms] = useState<string[]>([]);
-  // const [classroomDetails, setClassroomDetails] = useState<
-  //   Record<string, ClassroomDetail>
-  // >({});
-
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
@@ -128,7 +127,6 @@ export default function ClassroomGrid() {
       console.log("Factory contract: ", factoryContract);
       const addresses = await factoryContract.getClassrooms();
       console.log("This is address", addresses);
-      console.log("This is address", addresses);
       setClassrooms(addresses);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
@@ -138,13 +136,17 @@ export default function ClassroomGrid() {
   };
 
   if (loading) {
-    return <div className="text-center mt-6">Loading classrooms...</div>;
+    return (
+      <div className="text-center mt-6 text-purple-300">
+        Loading classrooms...
+      </div>
+    );
   }
 
   return (
     <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
       {classrooms.length > 0 &&
-        [...classrooms].reverse().map((classroom) => {
+        [...classrooms].reverse().map((classroom, index) => {
           const details = classroomDetails[classroom] || {
             name: "Loading...",
             teacher: "Loading...",
@@ -152,23 +154,35 @@ export default function ClassroomGrid() {
           };
 
           return (
-            <Card key={classroom} className="w-80">
-              <CardContent className="p-4">
-                <CardTitle className="text-xl mb-2">{details.name}</CardTitle>
-                <p className="text-sm text-gray-500 mb-2 break-all flex flex-wrap">
-                  address: {classroom}
-                </p>
-                <Badge>{details.symbol}</Badge>
-              </CardContent>
-              <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                <Button
-                  variant="link"
-                  onClick={() => router.push(`/dashboard/${classroom}`)}
-                >
-                  View Class
-                </Button>
-              </CardFooter>
-            </Card>
+            <motion.div
+              key={classroom}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="bg-gray-800 bg-opacity-50 backdrop-blur-lg border-gray-700 text-white hover:shadow-lg transition-shadow duration-300">
+                <CardContent className="p-4">
+                  <CardTitle className="text-xl mb-2 text-purple-300">
+                    {details.name}
+                  </CardTitle>
+                  <p className="text-sm text-gray-400 mb-2 break-all flex flex-wrap">
+                    address: {classroom}
+                  </p>
+                  <Badge className="bg-purple-600 text-white">
+                    {details.symbol}
+                  </Badge>
+                </CardContent>
+                <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                  <Button
+                    variant="link"
+                    className="text-purple-400 hover:text-purple-300"
+                    onClick={() => router.push(`/dashboard/${classroom}`)}
+                  >
+                    View Class
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           );
         })}
     </div>
