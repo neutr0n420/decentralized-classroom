@@ -1,282 +1,313 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../components/ui/button";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useEffect } from "react";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { motion } from "framer-motion";
+import { Button } from "../components/ui/button";
 
 export default function Home() {
-  const { isConnected } = useAppKitAccount()
+  const { isConnected } = useAppKitAccount();
   console.log(isConnected);
   useEffect(() => {
     if (isConnected) {
-      redirect('/TeacherStudent')
+      redirect("/TeacherStudent");
     }
-  }, [isConnected])
+  }, [isConnected]);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 text-white overflow-hidden">
+      <main className="flex-1 relative z-10">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+          <div className="container px-4 md:px-6 relative">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="flex flex-col items-center space-y-4 text-center"
+            >
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
                   Revolutionize Teaching with DeClassroom
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                <p className="mx-auto max-w-[700px] text-gray-200 md:text-xl">
                   Create secure, decentralized classrooms and reward your
                   students with unique NFTs.
                 </p>
               </div>
               <div className="space-x-4">
-                <Button size="lg">Get Started </Button>
-                <Button variant="outline" size="lg">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                >
+                  Get Started
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-purple-800 text-purple-500"
+                >
                   Learn More
                 </Button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         <section
           id="features"
-          className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800"
+          className="w-full py-12 md:py-24 lg:py-32 bg-black bg-opacity-50"
         >
           <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
               Key Features
             </h2>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-12">
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="rounded-full bg-primary p-3">
-                  <svg
-                    className=" h-6 w-6 text-white"
-                    fill="none"
-                    height="24"
-                    stroke="currentColor"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-col items-center space-y-4 p-6 bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-lg"
+              >
+                <svg
+                  className="w-12 h-12 text-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-                    <path d="M21 3v5h-5" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Decentralized Platform</h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
+                </svg>
+                <h3 className="text-xl font-medium text-white">
+                  Decentralized Platform
+                </h3>
+                <p className="text-gray-300 text-center">
                   Create and manage classrooms on a secure, decentralized
                   network.
                 </p>
-              </div>
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="rounded-full bg-primary p-3">
-                  <svg
-                    className=" h-6 w-6 text-white"
-                    fill="none"
-                    height="24"
-                    stroke="currentColor"
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col items-center space-y-4 p-6 bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-lg"
+              >
+                <svg
+                  className="w-12 h-12 text-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect height="11" rx="2" ry="2" width="18" x="3" y="11" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Enhanced Security</h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                <h3 className="text-xl font-medium text-white">
+                  Enhanced Security
+                </h3>
+                <p className="text-gray-300 text-center">
                   Protect your content and student data with blockchain
                   technology.
                 </p>
-              </div>
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="rounded-full bg-primary p-3">
-                  <svg
-                    className=" h-6 w-6 text-white"
-                    fill="none"
-                    height="24"
-                    stroke="currentColor"
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col items-center space-y-4 p-6 bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-lg"
+              >
+                <svg
+                  className="w-12 h-12 text-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">NFT-Gated Classes</h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                    strokeWidth={2}
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  />
+                </svg>
+                <h3 className="text-xl font-medium text-white">
+                  NFT-Gated Classes
+                </h3>
+                <p className="text-gray-300 text-center">
                   Control access to your classes with unique NFT keys.
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32">
+        <section
+          id="how-it-works"
+          className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-black to-purple-900"
+        >
           <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
               How It Works
             </h2>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-12">
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                  <span className="text-3xl font-bold">1</span>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-col items-center space-y-4"
+              >
+                <div className="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center text-2xl font-bold text-white">
+                  1
                 </div>
-                <h3 className="text-xl font-bold">Create a Classroom</h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <h3 className="text-xl font-medium text-white">
+                  Create a Classroom
+                </h3>
+                <p className="text-gray-300 text-center">
                   Set up your decentralized classroom and customize your
                   content.
                 </p>
-              </div>
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                  <span className="text-3xl font-bold">2</span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col items-center space-y-4"
+              >
+                <div className="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center text-2xl font-bold text-white">
+                  2
                 </div>
-                <h3 className="text-xl font-bold">Enroll Students</h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <h3 className="text-xl font-medium text-white">
+                  Enroll Students
+                </h3>
+                <p className="text-gray-300 text-center">
                   Students receive unique NFTs for each class they enroll in.
                 </p>
-              </div>
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                  <span className="text-3xl font-bold">3</span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col items-center space-y-4"
+              >
+                <div className="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center text-2xl font-bold text-white">
+                  3
                 </div>
-                <h3 className="text-xl font-bold">Teach and Reward</h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <h3 className="text-xl font-medium text-white">
+                  Teach and Reward
+                </h3>
+                <p className="text-gray-300 text-center">
                   Conduct classes and reward student achievements with NFTs.
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
         <section
           id="for-teachers"
-          className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800"
+          className="w-full py-12 md:py-24 lg:py-32 bg-black bg-opacity-50"
         >
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <Image
-                src="/placeholder.svg?height=400&width=600"
-                width={600}
-                height={400}
-                alt="Teacher using DeClassroom"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-              />
-              <div className="flex flex-col justify-center space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h3 className="text-2xl font-medium text-white mb-4">
                   For Teachers
-                </h2>
-                <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                </h3>
+                <p className="text-gray-300 mb-6">
                   DeClassroom empowers teachers with cutting-edge technology to
                   create engaging, secure, and rewarding learning experiences.
                 </p>
-                <ul className="grid gap-3 text-sm text-gray-500 dark:text-gray-400">
-                  <li className="flex items-center">
+                <ul className="space-y-2">
+                  <li className="flex items-center text-gray-300">
                     <svg
-                      className=" h-5 w-5 text-primary"
+                      className="w-5 h-5 mr-2 text-purple-500"
                       fill="none"
-                      height="24"
                       stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
                       viewBox="0 0 24 24"
-                      width="24"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <polyline points="20 6 9 17 4 12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
-                    <span className="ml-2">
-                      Create unlimited decentralized classrooms
-                    </span>
+                    Create unlimited decentralized classrooms
                   </li>
-                  <li className="flex items-center">
+                  <li className="flex items-center text-gray-300">
                     <svg
-                      className=" h-5 w-5 text-primary"
+                      className="w-5 h-5 mr-2 text-purple-500"
                       fill="none"
-                      height="24"
                       stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
                       viewBox="0 0 24 24"
-                      width="24"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <polyline points="20 6 9 17 4 12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
-                    <span className="ml-2">
-                      Control access with NFT-gated classes
-                    </span>
+                    Control access with NFT-gated classes
                   </li>
-                  <li className="flex items-center">
+                  <li className="flex items-center text-gray-300">
                     <svg
-                      className=" h-5 w-5 text-primary"
+                      className="w-5 h-5 mr-2 text-purple-500"
                       fill="none"
-                      height="24"
                       stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
                       viewBox="0 0 24 24"
-                      width="24"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <polyline points="20 6 9 17 4 12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
-                    <span className="ml-2">
-                      Reward students with unique NFTs
-                    </span>
+                    Reward students with unique NFTs
                   </li>
                 </ul>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button size="lg">Get Started</Button>
-                  <Button variant="outline" size="lg">
-                    Learn More
-                  </Button>
-                </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="w-full py-6 bg-gray-100 dark:bg-gray-800">
+      <footer className="w-full py-6 bg-black bg-opacity-50">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-              <Image
-                src="/logo.svg"
-                alt="DeClassroom Logo"
-                width={32}
-                height={32}
-              />
-              <p className="text-center text-sm leading-loose text-gray-600 dark:text-gray-400 md:text-left">
+              <p className="text-center text-sm leading-loose text-gray-300 md:text-left">
                 © 2023 DeClassroom. All rights reserved.
               </p>
             </div>
             <div className="flex gap-4">
               <Link
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="text-gray-300 hover:text-white transition-colors"
                 href="#"
               >
                 Terms
               </Link>
               <Link
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="text-gray-300 hover:text-white transition-colors"
                 href="#"
               >
                 Privacy

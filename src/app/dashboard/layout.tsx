@@ -7,7 +7,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const ISSERVER = typeof window === "undefined";
   let userIs = "null";
   if (!ISSERVER) {
-
     userIs = localStorage.getItem("userIs") || "null";
   }
 
@@ -15,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <SidebarProvider>
         <TeacherSideBar />
-        <main className="flex flex-col h-screen w-screen">
+        <main className="flex flex-col h-screen w-screen relative bg-purple-950">
           <SidebarTrigger />
           {children}
         </main>
@@ -25,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <SidebarProvider>
         <StudentSideBar />
-        <main className="flex flex-col h-screen w-screen">
+        <main className="flex flex-col h-screen w-screen bg-purple-950">
           <SidebarTrigger />
           {children}
         </main>
