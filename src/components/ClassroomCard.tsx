@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+
 import Link from "next/link";
 
 interface Classroom {
@@ -33,18 +33,19 @@ export default function ClassroomCard({ classroom }: ClassroomCardProps) {
         <p className="text-sm text-muted-foreground mb-2">
           Price: {classroom.price} ETH
         </p>
-        <p className="text-sm font-medium mb-2">Materials:</p>
-        <div className="flex flex-wrap gap-2">
+        {/* [TODO]: Removed Material's from the  */}
+        {/* <p className="text-sm font-medium mb-2">Materials:</p> */}
+        {/* <div className="flex flex-wrap gap-2">
           {classroom.materials.map((material, index) => (
             <Badge key={index} variant="secondary">
               {material}
             </Badge>
           ))}
-        </div>
+        </div> */}
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" asChild>
-          <Link href={`/edit-classroom/${classroom.address}`}>Edit</Link>
+          <Link href={`/dashboard/${classroom.address}`}>Edit</Link>
         </Button>
         <Button variant="outline" asChild>
           <Link href={`/view-classroom/${classroom.address}`}>View</Link>

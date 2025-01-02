@@ -45,6 +45,7 @@ export default function ManageClasses() {
             provider,
             teacherAddress
           );
+          console.log("This is teacher classes", teacherClasses);
           setClasses(teacherClasses);
         } catch (error) {
           console.error("Error fetching classes:", error);
@@ -80,7 +81,8 @@ export default function ManageClasses() {
         classroomABI,
         provider
       );
-
+      console.log("This is classroom contract", classroomContract);
+      // console.log("This is classroom contract's material", await classroomContract.viewMaterials());
       const owner = await classroomContract.owner();
 
       if (owner.toLowerCase() === teacherAddress.toLowerCase()) {
@@ -93,7 +95,7 @@ export default function ManageClasses() {
           name,
           symbol,
           price: utils.formatEther(price),
-          materials: await classroomContract.viewMaterials(),
+          // materials: await classroomContract.viewMaterials(),
         });
       }
     }
@@ -117,7 +119,7 @@ export default function ManageClasses() {
             asChild
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
           >
-            <Link href="/dashboard/create-class">
+            <Link href="/dashboard/create">
               <Plus className="mr-2 h-4 w-4" /> Create New Class
             </Link>
           </Button>
@@ -134,6 +136,7 @@ export default function ManageClasses() {
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
             {classes.map((classroom, index) => (
+              console.log("This is classroom", classroom),
               <motion.div
                 key={classroom.address}
                 initial={{ opacity: 0, y: 20 }}
@@ -164,7 +167,7 @@ export default function ManageClasses() {
                   asChild
                   className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                 >
-                  <Link href="/dashboard/create-class">
+                  <Link href="/dashboard/create">
                     Create Your First Class
                   </Link>
                 </Button>
