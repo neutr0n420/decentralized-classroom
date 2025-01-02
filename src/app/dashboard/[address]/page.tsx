@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
+import { Plus } from "lucide-react"
 import { ethers } from "ethers";
 import { classroomABI } from "../../../utils/constants";
 import { Web3Error } from "@/src/types/errors";
@@ -8,9 +9,9 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { Badge } from "@/src/components/ui/badge";
 import ClassroomPurchase from "@/src/components/ClassroomPurchase";
 import ClassroomMaterials from "@/src/components/ClassroomMaterials";
-import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
+import { PinataSDK } from "pinata-web3"
 import { motion } from "framer-motion";
 
 interface PageProps {
@@ -25,14 +26,20 @@ export type EthereumProviderType = ExternalProvider & {
   isMetaMask?: boolean;
 };
 
+const pinata = new PinataSDK({
+  pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyOGJmOGI3OS00OThiLTRjODctYTIwYy03OGVkZjZmODhkNmEiLCJlbWFpbCI6ImFyeWFuYnJhbWhhbmUxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIyNTNjZmZkODdiMjdmOGY5NTE0OCIsInNjb3BlZEtleVNlY3JldCI6Ijc3ZDk1NTRjZjE3NDgwNWU5YjQzN2Q0YjJjMzIyNjdkODRjMDI2NjZhMGQxY2RlODQ1ODNlZWQwYzg1Njc0MjIiLCJleHAiOjE3NjczNDUyNjR9.6MSUSZzWOpn4IQfRnM8w5AVlqF-6va9x1FccJ6jNe8w",
+  pinataGateway: "plum-abstract-tern-191.mypinata.cloud"
+})
+
 const ClassroomPage = ({ params }: PageProps) => {
   const { address } = use(params);
   const [materials, setMaterials] = useState<string[]>([]);
-  const [newMaterial, setNewMaterial] = useState("");
   const [addingMaterial, setAddingMaterial] = useState(false);
   const [classroomName, setClassroomName] = useState("");
   const [classroomSymbol, setClassroomSymbol] = useState("");
   const [classroomPrice, setClassroomPrice] = useState("");
+  const [uploadComplete, setUploadComplete] = useState(true);
+  const [ipfsHash, setIpfsHash] = useState("");
   const { address: userAddress } = useAppKitAccount();
 
   useEffect(() => {
@@ -42,7 +49,9 @@ const ClassroomPage = ({ params }: PageProps) => {
       setClassroomPrice(details.price);
     });
     fetchMaterials();
+
   }, [address]);
+
 
   const fetchClassroomDetails = async (classroomAddress: string) => {
     try {
@@ -73,6 +82,38 @@ const ClassroomPage = ({ params }: PageProps) => {
       };
     }
   };
+
+  const uploadMaterial = async (userFile: File) => {
+    try {
+      // If userFile is already a File object, use it directly
+      if (userFile instanceof File) {
+        setUploadComplete(false);
+        const upload = await pinata.upload.file(userFile);
+        console.log("This is the upload", upload);
+        setIpfsHash(upload.IpfsHash)
+
+        setUploadComplete(true);
+
+        return;
+      }
+
+      // If userFile is raw data, create a new File
+      const file = new File([userFile], "filename.txt", { type: "text/plain" });
+      const upload = await pinata.upload.file(file);
+
+
+      console.log("This is the upload", upload.IpfsHash);
+      console.log("This is the ipfs hash from upload Material", ipfsHash)
+      console.log("Hello")
+    } catch (error) {
+      console.error("Error uploading material:", error);
+    }
+  }
+
+  // const retiveMaterial = async () => {
+  //   const data = await pinata.gateways.get("QmVLwvmGehsrNEvhcCnnsw5RQNseohgEkFNN1848zNzdng")
+  //   console.log(data)
+  // }
 
   const fetchMaterials = async () => {
     if (address) {
@@ -118,7 +159,8 @@ const ClassroomPage = ({ params }: PageProps) => {
   };
 
   const addMaterial = async () => {
-    if (!newMaterial) {
+    console.log("IPFS Hash", ipfsHash);
+    if (!ipfsHash) {
       alert("Please enter an IPFS hash");
       return;
     }
@@ -136,9 +178,9 @@ const ClassroomPage = ({ params }: PageProps) => {
           signer
         );
 
-        const tx = await classroomContract.addMaterial(newMaterial);
+        const tx = await classroomContract.addMaterial(ipfsHash);
         await tx.wait();
-        setNewMaterial("");
+        setIpfsHash("");
         fetchMaterials();
       }
     } catch (error) {
@@ -197,13 +239,31 @@ const ClassroomPage = ({ params }: PageProps) => {
               <h2 className="text-2xl font-semibold mb-4 text-purple-400">
                 Course Materials
               </h2>
-              <div className="flex gap-4 mb-4">
-                <Input
+              <div className="flex flex-col items-center gap-4 mb-4">
+                {/* <Input
                   placeholder="Enter IPFS Hash"
                   value={newMaterial}
                   onChange={(e) => setNewMaterial(e.target.value)}
                   className="bg-gray-700 text-white border-purple-500"
+                /> */}
+                <input
+                  type="file"
+                  hidden
+                  id="browse"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+
+                      uploadMaterial(e.target.files[0]);
+                      console.log(e.target.files)
+                    }
+                  }}
+                  accept=".pdf,.docx,.pptx,.txt,.xlsx, .jpg, .jpeg, .png"
+                  multiple
                 />
+                <label htmlFor="browse" className="border-2 border-dashed p-36  cursor-pointer  text-gray-300 bg-gray-800 bg-opacity-50 rounded-xl flex flex-col items-center justify-center">
+                  <Plus size={64} opacity={60} />
+                  {uploadComplete ? <p>Upload Material</p> : <p>Uploading...</p>}
+                </label>
                 <Button
                   onClick={addMaterial}
                   disabled={addingMaterial}
