@@ -15,7 +15,6 @@ interface Classroom {
   name: string;
   symbol: string;
   price: string;
-  materials: string[];
 }
 
 interface ClassroomCardProps {
