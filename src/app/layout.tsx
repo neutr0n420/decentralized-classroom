@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
 import AppKit from "./auth";
-
+import HuddleClientComponent from "../context/huddle";
 import "./globals.css";
 
 export default function RootLayout({
@@ -14,7 +14,9 @@ export default function RootLayout({
         <AppKit>
           {" "}
           <Navbar />
-          {children}
+          <HuddleClientComponent>
+            {children}
+          </HuddleClientComponent>
         </AppKit>
       </body>
     </html>

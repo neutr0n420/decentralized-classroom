@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Plus, Search } from "lucide-react";
+import { Home, Plus, Search, Video } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -29,6 +29,11 @@ const teacherSidebar = [
     title: "Browse Classes",
     url: "/dashboard/classrooms",
     icon: Search,
+  },
+  {
+    title: "Start a video Class",
+    url: "/dashboard/video-call",
+    icon: Video,
   },
 ];
 
