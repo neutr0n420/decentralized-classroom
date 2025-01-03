@@ -25,7 +25,6 @@ interface Classroom {
   name: string;
   symbol: string;
   price: string;
-
 }
 
 export default function ManageClasses() {
@@ -135,17 +134,21 @@ export default function ManageClasses() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
-            {classes.map((classroom, index) => (
-              console.log("This is classroom", classroom),
-              <motion.div
-                key={classroom.address}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <ClassroomCard classroom={classroom} />
-              </motion.div>
-            ))}
+            {classes.map(
+              (classroom, index) => (
+                console.log("This is classroom", classroom),
+                (
+                  <motion.div
+                    key={classroom.address}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <ClassroomCard classroom={classroom} />
+                  </motion.div>
+                )
+              )
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -167,9 +170,7 @@ export default function ManageClasses() {
                   asChild
                   className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                 >
-                  <Link href="/dashboard/create">
-                    Create Your First Class
-                  </Link>
+                  <Link href="/dashboard/create">Create Your First Class</Link>
                 </Button>
               </CardFooter>
             </Card>
