@@ -32,12 +32,13 @@ const Page = () => {
         if (ClassOwner.toLowerCase() === (await signer.getAddress()).toLowerCase()) {
           classroomAddress.map(async (classAddress) => {
             const ClassroomContract = new ethers.Contract(classAddress, classroomABI, signer);
-            const studentDetails = await ClassroomContract.getStudentsWithTimestamps();
-            setStudentData(studentDetails);
-            const studentCount = await ClassroomContract.getTotalEnrolledStudents()
-            console.log("Student Count", Number(studentCount._hex));
-            setTotalEnrolledStudents(Number(studentCount._hex));
-            return studentDetails;
+            if (ClassOwner.toLowerCase() === await ClassroomContract.owner()) {
+              const studentDetails = await ClassroomContract.getStudentsWithTimestamps();
+              setStudentData(studentDetails);
+              const studentCount = await ClassroomContract.getTotalEnrolledStudents()
+              console.log("Student Count", Number(studentCount._hex));
+              setTotalEnrolledStudents(Number(studentCount._hex));
+            }
           })
         }
       }
@@ -56,32 +57,35 @@ const Page = () => {
   // getStudentDetails()
   return (
     <div className="text-white">
-      <div className="bg-indigo-500 w-1/5 text-center mx-8 rounded-xl">Total Enrolled Student: {totalEnrolledStudents}</div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Sr. No</TableHead>
-            <TableHead>Student Address</TableHead>
-            <TableHead>Enrollment Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {/* <TableHead>Enrolled Student Data</TableHead> */}
-          {studentData !== undefined && studentData.students !== undefined && studentData.students.length > 0 && studentData.students.map((student, index) => (
-            <TableRow key={index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>
-                <div className="font-mono">
-                  {student}
-                </div>
-              </TableCell>
-              <TableCell>
-                {formatTimestamp(studentData.timestamps[index])}
-              </TableCell>
+      {totalEnrolledStudents === 0 ? (<div className="text-center">No Student Enrolled</div>) : <div className="bg-indigo-500 w-1/5 text-center mx-8 rounded-xl">Total Enrolled Student: {totalEnrolledStudents}</div>}
+      {totalEnrolledStudents === 0 ? (<div className="text-center text-2xl mt-16">You will get information about the students here after someone join the class!</div>) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Sr. No</TableHead>
+              <TableHead>Student Address</TableHead>
+              <TableHead>Enrollment Date</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {/* <TableHead>Enrolled Student Data</TableHead> */}
+            {studentData !== undefined && studentData.students !== undefined && studentData.students.length > 0 && studentData.students.map((student, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <div className="font-mono">
+                    {student}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {formatTimestamp(studentData.timestamps[index])}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+
     </div>
   );
 };
