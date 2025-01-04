@@ -1,14 +1,23 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FactoryContractInstance } from "@/src/utils/contractFunction";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { ethers } from "ethers";
 import { classroomABI } from "@/src/utils/constants";
-import { Table, TableBody, TableCaption, TableCell, TableRow, TableHead, TableHeader } from "@/src/components/ui/table"
+import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from "@/src/components/ui/table"
 
 const Page = () => {
   const [classroomAddress, setClassroomAddress] = React.useState<string[]>([]);
-  const [studentData, setStudentData] = React.useState<any[]>([]);
+  interface StudentData {
+    students: string[];
+    timestamps: string[];
+  }
+
+  const [studentData, setStudentData] = useState<StudentData>({ students: [], timestamps: [] });
+
+  // const [studentData, setStudentData] = React.useState<Student[]>([]);
+
+
   const { isConnected } = useAppKitAccount();
   useEffect(() => {
     FactoryContractInstance().then((res) => {
@@ -25,25 +34,30 @@ const Page = () => {
         if (ClassOwner.toLowerCase() === (await signer.getAddress()).toLowerCase()) {
           classroomAddress.map(async (classAddress) => {
             const ClassroomContract = new ethers.Contract(classAddress, classroomABI, signer);
-            const studentDetails = await ClassroomContract.getEnrolledStudents();
-            console.log("This is student details", studentDetails);
-            setStudentData(studentDetails)
+            const studentDetails = await ClassroomContract.getStudentsWithTimestamps();
+            // const studentData = { studentDetails.students, studentDetails.timestamps };
+            console.log("This is student details with timeStamp", studentDetails.students);
+            setStudentData(studentDetails);
+            return studentDetails;
           })
         }
       }
     }
     getStudentDetails()
-  }, [isConnected])
+  }, [classroomAddress, isConnected])
 
-  console.log(studentData)
+  const formatTimestamp = (timestamp: string) => {
+    if (!timestamp) return "-";
+    // Convert BigNumber to number and then to Date
+    const date = new Date(parseInt(timestamp) * 1000);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+  };
+
+  console.log("This is state variable", studentData);
   // getStudentDetails()
   return (
-    // <div className="flex  justify-center  items-center text-white">
-    //   MANAGE CLASSROOMS/ Courses PAGE
-    // </div>
     <div className="text-white">
       <Table>
-        <TableCaption>Students</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Sr. No</TableHead>
@@ -53,11 +67,19 @@ const Page = () => {
         </TableHeader>
         <TableBody>
           {/* <TableHead>Enrolled Student Data</TableHead> */}
-          {studentData.map((student, index) => (
-            <tr key={index}>
+          {studentData !== undefined && studentData.students !== undefined && studentData.students.length > 0 && studentData.students.map((student, index) => (
+            console.log("This is student", student),
+            <TableRow key={index}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell>{student}</TableCell>
-            </tr>
+              <TableCell>
+                <div className="font-mono">
+                  {student}
+                </div>
+              </TableCell>
+              <TableCell>
+                {formatTimestamp(studentData.timestamps[index])}
+              </TableCell>
+            </TableRow>
           ))}
         </TableBody>
       </Table>
