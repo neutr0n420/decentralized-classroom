@@ -46,7 +46,7 @@ export function TeacherSideBar() {
   };
 
   return (
-    <Sidebar className="w-64 bg-gray-900 text-white border-r border-gray-800 mt-20  ">
+    <Sidebar className="w-64 bg-gray-900 text-white border-r border-gray-800 mt-16  ">
       <SidebarContent className="bg-gray-900">
         <SidebarGroup>
           <motion.div

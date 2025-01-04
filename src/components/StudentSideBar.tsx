@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Plus, Search } from "lucide-react";
+import { Home, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Sidebar,
@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 const studentSidebar = [
   {
     title: "Your Classes",
-    url: "/dashboard",
+    url: "/dashboard/my-classes",
     icon: Home,
   },
   {
@@ -25,17 +25,12 @@ const studentSidebar = [
     url: "/dashboard/classrooms",
     icon: Search,
   },
-  {
-    title: "Create Class",
-    url: "/dashboard/create",
-    icon: Plus,
-  },
 ];
 
 export function StudentSideBar() {
   const router = useRouter();
   return (
-    <Sidebar className="w-64 bg-gray-900 text-white border-r border-gray-800 mt-20">
+    <Sidebar className="w-64 bg-gray-900 text-white border-r border-gray-800 mt-16">
       <SidebarContent className="bg-gray-900">
         <SidebarGroup>
           <motion.div

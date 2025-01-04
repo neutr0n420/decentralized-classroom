@@ -10,13 +10,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased bg-purple-900">
+      <body className="antialiased bg-purple-900 h-screen relative">
         <AppKit>
           {" "}
-          <Navbar />
-          <HuddleClientComponent>
-            {children}
-          </HuddleClientComponent>
+          <div className="absolute top-0 right-0 left-0">
+            <Navbar />
+          </div>
+          <HuddleClientComponent>{children}</HuddleClientComponent>
         </AppKit>
       </body>
     </html>
