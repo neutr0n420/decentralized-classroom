@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x49584a4Ef0c9e7722dbc7530826d5345F20A6FDf";
+export const CONTRACT_ADDRESS = "0xa14692c32579B415534636014F6EA8e7D7a557f8";
 
 export const classroomFactoryAbi = [
   {
@@ -19,6 +19,25 @@ export const classroomFactoryAbi = [
     ],
     "name": "ClassroomCreated",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "classrooms",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -44,25 +63,6 @@ export const classroomFactoryAbi = [
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "classrooms",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getClassrooms",
     "outputs": [
@@ -76,7 +76,6 @@ export const classroomFactoryAbi = [
     "type": "function"
   }
 ]
-
 export const classroomABI = [
   {
     "inputs": [
@@ -336,6 +335,19 @@ export const classroomABI = [
       {
         "indexed": true,
         "internalType": "address",
+        "name": "student",
+        "type": "address"
+      }
+    ],
+    "name": "StudentEnrolled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "from",
         "type": "address"
       },
@@ -426,6 +438,32 @@ export const classroomABI = [
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEnrolledStudents",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalEnrolledStudents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

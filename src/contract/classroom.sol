@@ -8,12 +8,13 @@ contract Classroom is ERC721, Ownable {
     uint256 public nftPrice;
     uint256 public nextTokenId;
     string[] public materials;
-    address[] private enrolledStudents; // Array to store enrolled students
-    mapping(address => bool) private isEnrolled; // Mapping to track enrollment status
+    address[] private enrolledStudents;
+    mapping(address => bool) private isEnrolled;
+    mapping(address => uint256) private enrollmentTimestamps; // New mapping for timestamps
 
     event MaterialAdded(string indexed ipfsHash);
     event FundsWithdrawn(address indexed teacher, uint256 amount);
-    event StudentEnrolled(address indexed student);
+    event StudentEnrolled(address indexed student, uint256 timestamp);
 
     constructor(
         address _teacher,
@@ -26,11 +27,14 @@ contract Classroom is ERC721, Ownable {
 
     function buyAccess() external payable {
         require(msg.value == nftPrice, "Incorrect price");
+        require(!isEnrolled[msg.sender], "Already enrolled");
+
         _mint(msg.sender, nextTokenId);
         enrolledStudents.push(msg.sender);
         isEnrolled[msg.sender] = true;
+        enrollmentTimestamps[msg.sender] = block.timestamp; // Store enrollment timestamp
 
-        emit StudentEnrolled(msg.sender);
+        emit StudentEnrolled(msg.sender, block.timestamp);
         nextTokenId++;
     }
 
@@ -51,13 +55,37 @@ contract Classroom is ERC721, Ownable {
         emit FundsWithdrawn(owner(), balance);
     }
 
-    // New function to get all enrolled students
     function getEnrolledStudents() external view returns (address[] memory) {
         return enrolledStudents;
     }
 
-    // Optional: Get total number of enrolled students
     function getTotalEnrolledStudents() external view returns (uint256) {
         return enrolledStudents.length;
+    }
+
+    // New function to get enrollment timestamp of a specific student
+    function getEnrollmentTimestamp(
+        address student
+    ) external view returns (uint256) {
+        require(isEnrolled[student], "Student not enrolled");
+        return enrollmentTimestamps[student];
+    }
+
+    // New function to get all students with their enrollment timestamps
+    function getStudentsWithTimestamps()
+        external
+        view
+        returns (address[] memory students, uint256[] memory timestamps)
+    {
+        uint256 totalStudents = enrolledStudents.length;
+        students = new address[](totalStudents);
+        timestamps = new uint256[](totalStudents);
+
+        for (uint256 i = 0; i < totalStudents; i++) {
+            students[i] = enrolledStudents[i];
+            timestamps[i] = enrollmentTimestamps[enrolledStudents[i]];
+        }
+
+        return (students, timestamps);
     }
 }
