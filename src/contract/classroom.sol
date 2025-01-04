@@ -7,14 +7,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Classroom is ERC721, Ownable {
     uint256 public nftPrice;
     uint256 public nextTokenId;
+    uint256 public nextCompletionTokenId = 1000000;
     string[] public materials;
-    address[] private enrolledStudents;
-    mapping(address => bool) private isEnrolled;
-    mapping(address => uint256) private enrollmentTimestamps; // New mapping for timestamps
+    address[] private enrolledStudents; // Array to store enrolled students
+    mapping(address => bool) private isEnrolled; // Mapping to track enrollment status
+    mapping(address => bool) private hasCompletionNFT; // Track who has received completion NFTs
+
+    mapping(uint256 => bool) public isCompletionNFT;
 
     event MaterialAdded(string indexed ipfsHash);
     event FundsWithdrawn(address indexed teacher, uint256 amount);
-    event StudentEnrolled(address indexed student, uint256 timestamp);
+    event StudentEnrolled(address indexed student);
+    event CompletionNFTsDistributed(uint256 count);
 
     constructor(
         address _teacher,
@@ -23,6 +27,52 @@ contract Classroom is ERC721, Ownable {
         uint256 _price
     ) ERC721(_name, _symbol) Ownable(_teacher) {
         nftPrice = _price;
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public virtual override {
+        require(
+            !isCompletionNFT[tokenId],
+            "Completion NFTs cannot be transferred"
+        );
+        super.transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public virtual override {
+        require(
+            !isCompletionNFT[tokenId],
+            "Completion NFTs cannot be transferred"
+        );
+        super.safeTransferFrom(from, to, tokenId, data);
+    }
+
+    function distributeCompletionNFTs() external onlyOwner {
+        require(enrolledStudents.length > 0, "No enrolled students");
+
+        uint256 distributedCount = 0;
+
+        for (uint256 i = 0; i < enrolledStudents.length; i++) {
+            address student = enrolledStudents[i];
+
+            // Check if student hasn't already received a completion NFT
+            if (!hasCompletionNFT[student]) {
+                _safeMint(student, nextCompletionTokenId);
+                isCompletionNFT[nextCompletionTokenId] = true; // Mark as completion NFT
+                hasCompletionNFT[student] = true;
+                nextCompletionTokenId++;
+                distributedCount++;
+            }
+        }
+
+        emit CompletionNFTsDistributed(distributedCount);
     }
 
     function buyAccess() external payable {
@@ -63,29 +113,9 @@ contract Classroom is ERC721, Ownable {
         return enrolledStudents.length;
     }
 
-    // New function to get enrollment timestamp of a specific student
-    function getEnrollmentTimestamp(
+    function hasReceivedCompletionNFT(
         address student
-    ) external view returns (uint256) {
-        require(isEnrolled[student], "Student not enrolled");
-        return enrollmentTimestamps[student];
-    }
-
-    // New function to get all students with their enrollment timestamps
-    function getStudentsWithTimestamps()
-        external
-        view
-        returns (address[] memory students, uint256[] memory timestamps)
-    {
-        uint256 totalStudents = enrolledStudents.length;
-        students = new address[](totalStudents);
-        timestamps = new uint256[](totalStudents);
-
-        for (uint256 i = 0; i < totalStudents; i++) {
-            students[i] = enrolledStudents[i];
-            timestamps[i] = enrollmentTimestamps[enrolledStudents[i]];
-        }
-
-        return (students, timestamps);
+    ) external view returns (bool) {
+        return hasCompletionNFT[student];
     }
 }

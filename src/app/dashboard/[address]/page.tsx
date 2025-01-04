@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { Plus } from "lucide-react"
+import { Plus } from "lucide-react";
 import { ethers } from "ethers";
 import { classroomABI } from "../../../utils/constants";
 import { Web3Error } from "@/src/types/errors";
@@ -11,7 +11,7 @@ import ClassroomPurchase from "@/src/components/ClassroomPurchase";
 import ClassroomMaterials from "@/src/components/ClassroomMaterials";
 import { Button } from "@/src/components/ui/button";
 import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
-import { PinataSDK } from "pinata-web3"
+import { PinataSDK } from "pinata-web3";
 import { motion } from "framer-motion";
 
 interface PageProps {
@@ -27,9 +27,10 @@ export type EthereumProviderType = ExternalProvider & {
 };
 
 const pinata = new PinataSDK({
-  pinataJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyOGJmOGI3OS00OThiLTRjODctYTIwYy03OGVkZjZmODhkNmEiLCJlbWFpbCI6ImFyeWFuYnJhbWhhbmUxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIyNTNjZmZkODdiMjdmOGY5NTE0OCIsInNjb3BlZEtleVNlY3JldCI6Ijc3ZDk1NTRjZjE3NDgwNWU5YjQzN2Q0YjJjMzIyNjdkODRjMDI2NjZhMGQxY2RlODQ1ODNlZWQwYzg1Njc0MjIiLCJleHAiOjE3NjczNDUyNjR9.6MSUSZzWOpn4IQfRnM8w5AVlqF-6va9x1FccJ6jNe8w",
-  pinataGateway: "plum-abstract-tern-191.mypinata.cloud"
-})
+  pinataJwt:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyOGJmOGI3OS00OThiLTRjODctYTIwYy03OGVkZjZmODhkNmEiLCJlbWFpbCI6ImFyeWFuYnJhbWhhbmUxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIyNTNjZmZkODdiMjdmOGY5NTE0OCIsInNjb3BlZEtleVNlY3JldCI6Ijc3ZDk1NTRjZjE3NDgwNWU5YjQzN2Q0YjJjMzIyNjdkODRjMDI2NjZhMGQxY2RlODQ1ODNlZWQwYzg1Njc0MjIiLCJleHAiOjE3NjczNDUyNjR9.6MSUSZzWOpn4IQfRnM8w5AVlqF-6va9x1FccJ6jNe8w",
+  pinataGateway: "plum-abstract-tern-191.mypinata.cloud",
+});
 
 const ClassroomPage = ({ params }: PageProps) => {
   const { address } = use(params);
@@ -42,6 +43,9 @@ const ClassroomPage = ({ params }: PageProps) => {
   const [ipfsHash, setIpfsHash] = useState("");
   const { address: userAddress } = useAppKitAccount();
 
+  const [isDistributingNFTs, setIsDistributingNFTs] = useState(false);
+  const [isTeacher, setIsTeacher] = useState(false);
+  console.log("is teacher", isTeacher);
   useEffect(() => {
     fetchClassroomDetails(address).then((details) => {
       setClassroomName(details.name);
@@ -49,9 +53,55 @@ const ClassroomPage = ({ params }: PageProps) => {
       setClassroomPrice(details.price);
     });
     fetchMaterials();
-
+    checkIfTeacher(); // Add this line to check if current user is teacher
   }, [address]);
 
+  const checkIfTeacher = async () => {
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum as unknown as EthereumProviderType
+      );
+      const signer = provider.getSigner();
+      const classroomContract = new ethers.Contract(
+        address,
+        classroomABI,
+        signer
+      );
+      const owner = await classroomContract.owner();
+      setIsTeacher(owner.toLowerCase() === userAddress?.toLowerCase());
+    } catch (error) {
+      console.error("Error checking teacher status:", error);
+    }
+  };
+
+  const distributeCompletionNFTs = async () => {
+    if (!userAddress || !isTeacher) {
+      alert("Only the teacher can distribute completion NFTs");
+      return;
+    }
+
+    setIsDistributingNFTs(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum as unknown as EthereumProviderType
+      );
+      const signer = provider.getSigner();
+      const classroomContract = new ethers.Contract(
+        address,
+        classroomABI,
+        signer
+      );
+
+      const tx = await classroomContract.distributeCompletionNFTs();
+      await tx.wait();
+      alert("Completion NFTs distributed successfully!");
+    } catch (error) {
+      console.error("Error distributing completion NFTs:", error);
+      alert("Error distributing completion NFTs. Please try again.");
+    } finally {
+      setIsDistributingNFTs(false);
+    }
+  };
 
   const fetchClassroomDetails = async (classroomAddress: string) => {
     try {
@@ -90,7 +140,7 @@ const ClassroomPage = ({ params }: PageProps) => {
         setUploadComplete(false);
         const upload = await pinata.upload.file(userFile);
         console.log("This is the upload", upload);
-        setIpfsHash(upload.IpfsHash)
+        setIpfsHash(upload.IpfsHash);
 
         setUploadComplete(true);
 
@@ -101,14 +151,13 @@ const ClassroomPage = ({ params }: PageProps) => {
       const file = new File([userFile], "filename.txt", { type: "text/plain" });
       const upload = await pinata.upload.file(file);
 
-
       console.log("This is the upload", upload.IpfsHash);
-      console.log("This is the ipfs hash from upload Material", ipfsHash)
-      console.log("Hello")
+      console.log("This is the ipfs hash from upload Material", ipfsHash);
+      console.log("Hello");
     } catch (error) {
       console.error("Error uploading material:", error);
     }
-  }
+  };
 
   // const retiveMaterial = async () => {
   //   const data = await pinata.gateways.get("QmVLwvmGehsrNEvhcCnnsw5RQNseohgEkFNN1848zNzdng")
@@ -227,75 +276,87 @@ const ClassroomPage = ({ params }: PageProps) => {
           className="grid gap-8 md:grid-cols-[3fr_1fr]"
         >
           <div className="bg-gray-800 bg-opacity-50 p-6 rounded-xl backdrop-blur-lg">
-            <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              {classroomName}
-            </h1>
-            <Badge className="bg-purple-600 text-white">
-              {classroomSymbol}
-            </Badge>
+            <div>
+              <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                {classroomName}
+              </h1>
+              <Badge className="bg-purple-600 text-white">
+                {classroomSymbol}
+              </Badge>
+            </div>
+
             <p className="mt-4 text-gray-300">Address: {address}</p>
 
             <div className="mt-8">
               <h2 className="text-2xl font-semibold mb-4 text-purple-400">
                 Course Materials
               </h2>
-              <div className="flex flex-col items-center gap-4 mb-4">
-                {/* <Input
+
+              {isTeacher && (
+                <div className="flex flex-col items-center gap-4 mb-4">
+                  {/* <Input
                   placeholder="Enter IPFS Hash"
                   value={newMaterial}
                   onChange={(e) => setNewMaterial(e.target.value)}
                   className="bg-gray-700 text-white border-purple-500"
                 /> */}
-                <input
-                  type="file"
-                  hidden
-                  id="browse"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-
-                      uploadMaterial(e.target.files[0]);
-                      console.log(e.target.files)
-                    }
-                  }}
-                  accept=".pdf,.docx,.pptx,.txt,.xlsx, .jpg, .jpeg, .png"
-                  multiple
-                />
-                <label htmlFor="browse" className="border-2 border-dashed p-36  cursor-pointer  text-gray-300 bg-gray-800 bg-opacity-50 rounded-xl flex flex-col items-center justify-center">
-                  <Plus size={64} opacity={60} />
-                  {uploadComplete ? <p>Upload Material</p> : <p>Uploading...</p>}
-                </label>
-                <Button
-                  onClick={addMaterial}
-                  disabled={addingMaterial}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                >
-                  {addingMaterial ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5 mr-2"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                      Adding...
-                    </>
-                  ) : (
-                    "Add Material"
-                  )}
-                </Button>
-              </div>
+                  <input
+                    type="file"
+                    hidden
+                    id="browse"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        uploadMaterial(e.target.files[0]);
+                        console.log(e.target.files);
+                      }
+                    }}
+                    accept=".pdf,.docx,.pptx,.txt,.xlsx, .jpg, .jpeg, .png"
+                    multiple
+                  />
+                  <label
+                    htmlFor="browse"
+                    className="border-2 border-dashed p-36  cursor-pointer  text-gray-300 bg-gray-800 bg-opacity-50 rounded-xl flex flex-col items-center justify-center"
+                  >
+                    <Plus size={64} opacity={60} />
+                    {uploadComplete ? (
+                      <p>Upload Material</p>
+                    ) : (
+                      <p>Uploading...</p>
+                    )}
+                  </label>
+                  <Button
+                    onClick={addMaterial}
+                    disabled={addingMaterial}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                  >
+                    {addingMaterial ? (
+                      <>
+                        <svg
+                          className="animate-spin h-5 w-5 mr-2"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          />
+                        </svg>
+                        Adding...
+                      </>
+                    ) : (
+                      "Add Material"
+                    )}
+                  </Button>
+                </div>
+              )}
               <ClassroomMaterials materials={materials} />
             </div>
           </div>
@@ -306,6 +367,9 @@ const ClassroomPage = ({ params }: PageProps) => {
               title={classroomName}
               symbol={classroomSymbol}
               buyAccess={buyAccess}
+              isTeacher={isTeacher}
+              distributeCompletionNFTs={distributeCompletionNFTs}
+              isDistributingNFTs={isDistributingNFTs}
             />
           </div>
         </motion.div>
