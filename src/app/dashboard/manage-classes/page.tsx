@@ -19,6 +19,7 @@ import {
 } from "@/src/components/ui/card";
 import ClassroomCard from "@/src/components/ClassroomCard";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 interface Classroom {
   address: string;
@@ -30,6 +31,7 @@ interface Classroom {
 export default function ManageClasses() {
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -102,25 +104,27 @@ export default function ManageClasses() {
     return teacherClasses;
   }
 
+  const handleCreateClick = () => {
+    console.log("Create new class clicked");
+    router.push("/dashboard/create");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 text-white">
       <div className="container mx-auto px-4 py-12">
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="flex justify-between items-center mb-8"
         >
-          <h1 className="text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+          <h1 className="text-4xl font-bold tracking-tighter bg-clip-text pt-12 text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
             Manage Your Classes
           </h1>
-          <Button
-            asChild
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-          >
-            <Link href="/dashboard/create">
-              <Plus className="mr-2 h-4 w-4" /> Create New Class
-            </Link>
+          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white z-50">
+            <Plus className="mr-2 h-4 w-4" onClick={handleCreateClick} /> Create
+            New Class
           </Button>
         </motion.div>
         {loading ? (

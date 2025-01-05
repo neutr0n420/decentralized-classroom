@@ -15,7 +15,7 @@ export default function ClassroomsPage() {
         transition={{ duration: 0.5 }}
         className="container mx-auto max-w-6xl"
       >
-        <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+        <h1 className="text-4xl font-bold mb-8 pt-20 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
           Browse Classrooms
         </h1>
         <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl shadow-lg p-6">

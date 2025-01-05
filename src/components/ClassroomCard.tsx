@@ -23,9 +23,11 @@ interface ClassroomCardProps {
 
 export default function ClassroomCard({ classroom }: ClassroomCardProps) {
   return (
-    <Card>
+    <Card className="bg-gray-800 bg-opacity-50 backdrop-blur-lg border-gray-700 text-white hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
-        <CardTitle>{classroom.name}</CardTitle>
+        <CardTitle className="text-xl mb-2 text-purple-300">
+          {classroom.name}
+        </CardTitle>
         <CardDescription>{classroom.symbol}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -43,10 +45,18 @@ export default function ClassroomCard({ classroom }: ClassroomCardProps) {
         </div> */}
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" asChild>
+        <Button
+          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+          variant="outline"
+          asChild
+        >
           <Link href={`/dashboard/${classroom.address}`}>Edit</Link>
         </Button>
-        <Button variant="outline" asChild>
+        <Button
+          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+          variant="outline"
+          asChild
+        >
           <Link href={`/view-classroom/${classroom.address}`}>View</Link>
         </Button>
       </CardFooter>

@@ -14,6 +14,7 @@ import {
   classroomFactoryAbi,
   CONTRACT_ADDRESS,
 } from "../utils/constants";
+import { MultiStepLoader } from "./ui/multi-step-loader";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -29,6 +30,7 @@ export default function ClassroomGrid() {
   const router = useRouter();
   const factoryAddress = CONTRACT_ADDRESS;
   const { isConnected } = useAppKitAccount();
+  const [isOpeningClass, setIsOpeningClass] = useState(false);
 
   const classroomDetails = useStore((state) => state.classroomDetails);
   const setClassroomDetails = useStore((state) => state.setClassroomDetails);
@@ -143,8 +145,24 @@ export default function ClassroomGrid() {
     );
   }
 
+  const loadingStates = [
+    {
+      text: "Calling the RPC",
+    },
+    {
+      text: "Querying the blockchain",
+    },
+    {
+      text: "Parsing the data",
+    },
+  ];
   return (
     <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
+      <MultiStepLoader
+        loadingStates={loadingStates}
+        loading={isOpeningClass}
+        duration={2000}
+      />
       {classrooms.length > 0 &&
         [...classrooms].reverse().map((classroom, index) => {
           const details = classroomDetails[classroom] || {
@@ -176,7 +194,11 @@ export default function ClassroomGrid() {
                   <Button
                     variant="link"
                     className="text-purple-400 hover:text-purple-300"
-                    onClick={() => router.push(`/dashboard/${classroom}`)}
+                    onClick={() => {
+                      setIsOpeningClass(true);
+                      router.push(`/dashboard/${classroom}`);
+                      setIsOpeningClass(false);
+                    }}
                   >
                     View Class
                   </Button>

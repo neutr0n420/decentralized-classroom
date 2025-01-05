@@ -76,24 +76,36 @@ const ClassroomPage = ({ params }: PageProps) => {
   };
 
   const RedeemBalance = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum as unknown as EthereumProviderType);
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum as unknown as EthereumProviderType
+    );
     const signer = provider.getSigner();
-    const classroomContract = new ethers.Contract(address, classroomABI, signer);
+    const classroomContract = new ethers.Contract(
+      address,
+      classroomABI,
+      signer
+    );
     // const owner = await classroomContract.owner();
-    const tx = await classroomContract.withdrawFunds()
+    const tx = await classroomContract.withdrawFunds();
     console.log(await tx.wait());
     setContractBalance(0);
-  }
+  };
 
   const SettlePayment = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum as unknown as EthereumProviderType);
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum as unknown as EthereumProviderType
+    );
     const signer = provider.getSigner();
-    const classroomContract = new ethers.Contract(address, classroomABI, signer);
+    const classroomContract = new ethers.Contract(
+      address,
+      classroomABI,
+      signer
+    );
     const owner = await classroomContract.owner();
     const contractBalance = await classroomContract.balanceOf(owner);
     setContractBalance(Number(contractBalance._hex));
     // console.log("Classroom balance", await classroomContract.balanceOf(owner));
-  }
+  };
   SettlePayment();
   const distributeCompletionNFTs = async () => {
     if (!userAddress || !isTeacher) {
@@ -288,8 +300,8 @@ const ClassroomPage = ({ params }: PageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 text-white">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 text-white ">
+      <div className="container mx-auto px-4 py-12 pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -381,15 +393,23 @@ const ClassroomPage = ({ params }: PageProps) => {
               <ClassroomMaterials materials={materials} />
               {isTeacher ? (
                 <div>
-                  <h3 className="text-purple-300 font-bold text-2xl my-6">Current Balance:$EDU {contractBalance} </h3>
-                  <button onClick={() => RedeemBalance()}>Redeem Balance</button>
+                  <h3 className="text-purple-300 font-bold text-2xl my-6">
+                    Current Balance:$EDU {contractBalance}{" "}
+                  </h3>
+                  <Button
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 text-white flex items-center gap-2"
+                    onClick={() => RedeemBalance()}
+                  >
+                    Redeem Balance
+                  </Button>
                 </div>
               ) : (
                 <div>
-                  <h3 className="text-purple-300 font-bold text-2xl my-6">Price: $EDU {classroomPrice} </h3>
+                  <h3 className="text-purple-300 font-bold text-2xl my-6">
+                    Price: $EDU {classroomPrice}{" "}
+                  </h3>
                 </div>
               )}
-
             </div>
           </div>
           <div>
