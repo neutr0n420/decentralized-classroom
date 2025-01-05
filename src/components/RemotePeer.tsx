@@ -94,12 +94,8 @@ const RemotePeer = ({ peerId }: Props) => {
 
     return (
         <div className="flex flex-col gap-2">
-            <video
-                ref={vidRef}
-                autoPlay
-                muted
-                className="border-2 rounded-xl border-white-400 aspect-video"
-            />
+            <div
+                className="border-2 rounded-xl border-white-400 aspect-video text-center">person</div>
             {screenVideo && (
                 <video
                     ref={screenVideoRef}
