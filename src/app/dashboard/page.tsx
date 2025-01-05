@@ -56,6 +56,7 @@ const Page = () => {
 
   // getStudentDetails()
   return (
+
     <div className="text-white">
       {totalEnrolledStudents === 0 ? (<div className="text-center">No Student Enrolled</div>) : <div className="bg-indigo-500 w-1/5 text-center mx-8 rounded-xl">Total Enrolled Student: {totalEnrolledStudents}</div>}
       {totalEnrolledStudents === 0 ? (<div className="text-center text-2xl mt-16">You will get information about the students here after someone join the class!</div>) : (

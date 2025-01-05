@@ -9,6 +9,10 @@ interface StoreState {
   classroomDetails: Record<string, ClassroomDetail>;
   setClassroomDetails: (details: Record<string, ClassroomDetail>) => void;
 }
+interface AccessStoreState {
+  accessToken: string;
+  setAccessToken: (token: string) => void;
+}
 
 export const useStore = create<StoreState>((set) => ({
   classroomDetails: {},
@@ -16,3 +20,8 @@ export const useStore = create<StoreState>((set) => ({
   setClassroomDetails: (details: Record<string, ClassroomDetail>) =>
     set((state) => ({ ...state, classroomDetails: details })),
 }));
+
+export const useAccessStore = create<AccessStoreState>((set) => ({
+  accessToken: "test",
+  setAccessToken: (token: string) => set({ accessToken: token }),
+}))
