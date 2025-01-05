@@ -9,7 +9,7 @@ export async function GET(request: Request) {
         return new Response("missing roomId", { status: 400 });
     }
     const accessToken = new AccessToken({
-        apiKey: "ak_ahfxioeifeusrvlx",
+        apiKey: "ak_NNnhznfdq52M1Jbk",
         roomId: roomId as string,
         role: Role.HOST,
         permissions: {
