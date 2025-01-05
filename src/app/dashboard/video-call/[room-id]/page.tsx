@@ -1,6 +1,6 @@
 "use client"
 import { Video, Mic } from "lucide-react";
-import { useLocalVideo, useLocalAudio, useRoom } from "@huddle01/react"
+import { useLocalVideo, useLocalAudio } from "@huddle01/react"
 import { useAccessStore } from "@/src/store/store";
 import { useEffect, useRef } from "react";
 const Page = () => {
