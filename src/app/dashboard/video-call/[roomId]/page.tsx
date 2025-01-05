@@ -29,7 +29,7 @@ const Page = () => {
 
     const handleJoin = async () => {
         console.log("join");
-        const createToken = await fetch(`http://localhost:3000/api/huddle-route?roomId=${roomId}`);
+        const createToken = await fetch(`https://declassnet.vercel.app/api/huddle-route?roomId=${roomId}`);
         const accessToken = await createToken.text();
         localStorage.setItem("teacher-access-token", JSON.stringify(accessToken));
 
