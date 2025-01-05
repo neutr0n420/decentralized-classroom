@@ -2,17 +2,10 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { href: "#features", label: "Features" },
-    { href: "#how-it-works", label: "How It Works" },
-    { href: "#for-teachers", label: "For Teachers" },
-  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-purple-800 bg-purple-950 bg-opacity-80 backdrop-blur-md supports-[backdrop-filter]:bg-fuchsia-950/950">
@@ -37,18 +30,6 @@ const Navbar = () => {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm font-medium text-gray-300 hover:text-purple-400 transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
         <div className="flex items-center space-x-4">
           <appkit-button label="Login" />
           <button
@@ -59,26 +40,6 @@ const Navbar = () => {
           </button>
         </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -20 }}
-        transition={{ duration: 0.3 }}
-        className={`${
-          isOpen ? "block" : "hidden"
-        } md:hidden absolute top-16 left-0 right-0 bg-gray-900 py-2`}
-      >
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-800 hover:text-white transition-colors"
-            onClick={() => setIsOpen(false)}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </motion.div>
     </header>
   );
 };

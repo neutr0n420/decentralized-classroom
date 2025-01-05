@@ -8,12 +8,12 @@ export default function TeacherOrStudent() {
   const items = [
     {
       title: "Teacher",
-      url: "/dashboard?userIs=teacher",
+      url: "/dashboard/manage-classes?userIs=teacher",
       icon: School,
     },
     {
       title: "Student",
-      url: "/dashboard?userIs=student",
+      url: "/dashboard/my-classes?userIs=student",
       icon: GraduationCap,
     },
   ];
