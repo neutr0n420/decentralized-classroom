@@ -1,7 +1,5 @@
 "use client";
 import { createRoom } from "@/src/app/api/createRoom";
-// import { useLocalVideo, useRoom } from "@huddle01/react";
-// import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
