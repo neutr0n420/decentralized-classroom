@@ -10,8 +10,9 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 
 
-const LectureCard = ({ data }) => {
-    console.log(data)
+
+const LectureCard = () => {
+
     // console.log("data reached to the component", classItem)
     // // Convert hex to decimal
     // const timestampValue = parseInt(timestamp, 16);

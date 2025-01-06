@@ -40,7 +40,7 @@ const Page = () => {
     return (
         <div className="pt-32">
             {liveClasses && liveClasses.map((classItem) => {
-                return < LectureCard data={classItem} key={classItem.id} />
+                return < LectureCard key={classItem.id} />
             })}
 
         </div>
