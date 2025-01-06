@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Search } from "lucide-react";
+import { Home, Search, Radio } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Sidebar,
@@ -25,6 +25,11 @@ const studentSidebar = [
     url: "/dashboard/classrooms",
     icon: Search,
   },
+  {
+    title: "Live Classes",
+    url: "/dashboard/schedule",
+    icon: Radio
+  }
 ];
 
 export function StudentSideBar() {
