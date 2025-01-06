@@ -170,6 +170,7 @@ const App = () => {
                         <Button
                             disabled={loading}
                             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                            onClick={() => roomCreate()}
                         >
                             {loading ? (
                                 <>
@@ -185,15 +186,6 @@ const App = () => {
                         </Button>
                     </CardFooter>
                 </Card>
-
-                <Button
-                    onClick={() => roomCreate()}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                >
-                    {" "}
-                    <Plus />
-                    New Room
-                </Button>
             </div>
 
 

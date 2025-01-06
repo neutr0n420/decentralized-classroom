@@ -139,7 +139,7 @@ export default function CreateClassroom() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="price" className="text-gray-300">
-                Price (ETH)
+                Price (EDU)
               </Label>
               <div className="relative">
                 <Coins
